@@ -4,8 +4,21 @@
 <head>
   <meta charset="UTF-8" />
   <title>Utah Air Quality</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
   <style>
     /* style div and headers */
+   html, body {
+      margin: 0;
+      height: 100%;
+      font-family: "Noto Sans JP", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+    }
+
     .chart,
     h2 {
       text-align: center;
@@ -20,18 +33,12 @@
       padding: 5px;
     }
 
-    svg {
-      padding: 10px;
-      width: 500px;
-      height: 250px;
-    }
-
     /* style of bar charts */
-    .bar-chart rect {
+    .bar{
       fill: rgb(79, 175, 211);
     }
 
-    .bar-chart .hovered {
+    .bar:hover {
       fill: #979696;
     }
 
@@ -56,6 +63,10 @@
       fill: black; /* Explicitly set the text color */
     /* }  */
 
+    #page-title {
+      text-align: center;
+    }
+
     /* style of area charts */
     .area-chart {
       fill: rgb(79, 175, 211);
@@ -69,12 +80,54 @@
     .scatter-plot .hovered {
       fill: #979696;
     }
+
+    #screen-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+    }
+
+    #left-col-container {
+      width: 75%;
+      background-color: burlywood;
+    }
+
+    #right-col-container {
+      width: 25%;
+      background-color: aqua;
+    }
+
+
+
   </style>
   <!-- d3 script -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 
 <body>
+
+
+<div id="screen-container">
+  <div id="left-col-container">
+    <h1 id="page-title">Utah Air Quality</h1>
+    <div id="map-container">
+      <!-- <svg id="utah-map-svg"></svg> -->
+  </div>
+  
+  </div>
+  <div id="right-col-container">
+    <div id="pie-chart-container">
+      <div class="chart">
+        <h2>Bar Chart</h2>
+        <div id="barchart-container">
+        </div>
+      </div>
+      <!-- <svg id="pie-chart-svg"></svg> -->
+    </div>
+  </div>
+</div>
+
+
 <!--<div class="toolbox">-->
 
 <!--    <span>-->
@@ -98,31 +151,8 @@
 <!--</div>-->
 <!--<br />-->
 
-<div class="row chart">
-  <div class="chart">
-    <h2>Bar Charts</h2>
-    <div id="Barchart-div">
-    </div>
-  </div>
-
-  <div class="chart">
-    <h2>Line Charts</h2>
-    <div id="Linechart-div"></div>
-  </div>
-</div>
-
-<div class="row chart">
-  <div class="chart">
-    <h2>Area Charts</h2>
-    <div id="Areachart-div"></div>
-  </div>
-
-  <div class="chart">
-    <h2>Scatterplot</h2>
-    <div id="Scatterplot-div"></div>
-  </div>
-</div>
 </body>
 <script src="script.js"></script>
+<script src="barchart.js"></script>
 
 </html>
