@@ -1,4 +1,4 @@
-# CS5630_Project
+# Utah Air Quality
  works for CS 6530 
 
 
