@@ -1,6 +1,6 @@
 // Constants for the charts, that would be useful.
-const CHART_WIDTH = 500 - 50 - 20;
-const CHART_HEIGHT = 250 - 20 - 20;
+const CHART_WIDTH = 1000 - 50 - 20;
+const CHART_HEIGHT = 500 - 20 - 20;
 const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
 const ANIMATION_DURATION = 300;
 
@@ -8,13 +8,13 @@ setup();
 
 function setup() {
 
-  // d3.select('#metric').on('change', changeData);
-  // d3.select('#dataset').on('change', changeData);
-  // d3.select('#random').on('change', changeData);
-
+    // d3.select('#metric').on('change', changeData);
+    // d3.select('#dataset').on('change', changeData);
+    // d3.select('#random').on('change', changeData);
+    //   { id: 'Barchart-div', class: 'bar-chart' },
   const charts = [
     { id: 'Linechart-div', class: 'line-chart' },
-    { id: 'Barchart-div', class: 'bar-chart' },
+    
     { id: 'Areachart-div', class: 'area-chart' },
     { id: 'Scatterplot-div', class: 'scatter-plot' }
   ];
