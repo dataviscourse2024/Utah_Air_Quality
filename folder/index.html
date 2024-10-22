@@ -97,6 +97,16 @@
       background-color: aqua;
     }
 
+    #map-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    svg {
+      display: block;
+      margin: auto;
+    }
 
 
   </style>
@@ -111,9 +121,37 @@
   <div id="left-col-container">
     <h1 id="page-title">Utah Air Quality</h1>
     <div id="map-container">
-      <!-- <svg id="utah-map-svg"></svg> -->
-  </div>
-  
+        <h2>Utah Map</h2>
+        <svg id="utah-map-svg" width = "600" height="800"></svg>
+    </div>
+    <script>
+        const width = 600;
+        const height = 800;
+
+        const projection = d3.geoMercator()
+          .scale(4000)  // Adjust this scale based on the region size
+          .center([-111.0937, 39.3200])  // Center the projection on Utah
+          .translate([width / 2, height / 2]);
+
+        const path = d3.geoPath().projection(projection);
+
+        // Load GeoJSON data
+        d3.json("data/utah.geojson").then(function(data) {
+            const svg = d3.select("#utah-map-svg");
+
+            svg.selectAll("path")
+                .data(data.features)
+                .enter().append("path")
+                .attr("d", path)
+                .attr("stroke", "#000000")
+                .attr("fill", "none")
+                .on("mouseover", function(event, d) {
+                    d3.select(this).attr();
+                })
+        }).catch(function(error) {
+            console.error("Error loading the GeoJSON data: ", error);
+        });
+    </script>
   </div>
   <div id="right-col-container">
     <div id="pie-chart-container">
