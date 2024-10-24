@@ -248,9 +248,15 @@ function changeData() {
       // Parse data
       d.Date = d3.timeParse("%m/%d/%Y")(d.Date);
       d["Daily Mean PM2.5 Concentration"] = +d["Daily Mean PM2.5 Concentration"];
+
+      d["latitude"] = +d["latitude"];
+      d["longitude"] = +d["longitude"];
       // d["lattidute"] = +d["lattidute"];
       // d["longitude"] = +d["longitude"];
+    //   console.log(d)
     });
+
+    console.log(data);
 
     // Log the parsed data to the console
     // console.log(data);
