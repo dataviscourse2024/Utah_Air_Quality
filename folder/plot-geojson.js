@@ -1,4 +1,3 @@
-// Import D3.js and the convertCsvToGeoJson function
 import * as d3 from 'https://cdn.skypack.dev/d3@7';
 import { convertCsvToGeoJson } from './script.js';
 
@@ -116,6 +115,49 @@ function main() {
   convertCsvToGeoJson("data/test.csv", function(geojson) {
     plotPoints(geojson, svg, projection);
   });
+
+  // Set optional offsets if you want to adjust the modal's position slightly from the cursor
+  const xOffset = 10; // Horizontal offset for the modal
+  const yOffset = 10; // Vertical offset for the modal
+
+  // Select the target div and bind the hover events
+  d3.select("#utah-map-svg")
+    .on("mouseover", function (event) {
+      // Get mouse coordinates relative to the document
+      const x = event.pageX;
+      const y = event.pageY;
+
+      // Select the modal and update its position
+      d3.select("#chart-modal")
+        .style("left", (x + xOffset) + "px")
+        .style("top", (y + yOffset) + "px")
+        .style("display", "block"); // Show the modal
+    })
+    .on("mousemove", function (event) {
+      // Update modal position as the mouse moves
+      const x = event.pageX;
+      const y = event.pageY;
+
+      d3.select("#chart-modal")
+        .style("left", (x + xOffset) + "px")
+        .style("top", (y + yOffset) + "px");
+    })
+    .on("mouseout", function () {
+      // Hide the modal when the mouse leaves the div
+      d3.select("#chart-modal").style("display", "none");
+    });
+
+  d3.select("#arrow-icon")
+    .on("mouseover", function () {
+      // Shift left and apply scaleX(-1) (horizontal flip)
+      d3.select(this)
+        .style("transform", "scaleX(-1) translateX(10px)");
+    })
+    .on("mouseout", function () {
+      // Reset to original position and orientation
+      d3.select(this)
+        .style("transform", "scaleX(-1) translateX(0px)");
+    });
 }
 
 // Run the main function
