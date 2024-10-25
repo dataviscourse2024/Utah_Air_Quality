@@ -13,7 +13,7 @@ function setup() {
     svg.append("rect")
     .attr("width", "100%")
     .attr("height", "100%")
-    .attr("fill", "pink");
+    .attr("fill", "white");
 
     const group = svg.append("g")
     .attr("transform", `translate(${MARGIN.left},${MARGIN.top})`);
