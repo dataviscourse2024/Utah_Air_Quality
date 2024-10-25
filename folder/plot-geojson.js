@@ -4,10 +4,10 @@ import { convertCsvToGeoJson } from './script.js';
 // Color combination
 const colors = {
   mapFill: "#c2cfd3",
-  mapBorder: "#b4ccd7",
+  mapBorder: "#5e5a51",
   hoverFill: "#ffcc00",
   hoverBorder: "#ff9900",
-  circleFill: "#edf4f5",
+  circleFill: "#293742",
   circleHover: "#d2e0f5"
 };
 
