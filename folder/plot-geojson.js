@@ -115,7 +115,6 @@ function main() {
   convertCsvToGeoJson("data/test.csv", function(geojson) {
     plotPoints(geojson, svg, projection);
   });
-
   // Set optional offsets if you want to adjust the modal's position slightly from the cursor
   const xOffset = 10; // Horizontal offset for the modal
   const yOffset = 10; // Vertical offset for the modal
@@ -123,41 +122,69 @@ function main() {
   // Select the target div and bind the hover events
   d3.select("#utah-map-svg")
     .on("mouseover", function (event) {
-      // Get mouse coordinates relative to the document
-      const x = event.pageX;
-      const y = event.pageY;
-
-      // Select the modal and update its position
-      d3.select("#chart-modal")
-        .style("left", (x + xOffset) + "px")
-        .style("top", (y + yOffset) + "px")
-        .style("display", "block"); // Show the modal
+        // Show the modal on hover
+        d3.select("#chart-modal").style("display", "block");
     })
     .on("mousemove", function (event) {
-      // Update modal position as the mouse moves
-      const x = event.pageX;
-      const y = event.pageY;
+        // Get the viewport dimensions
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
 
-      d3.select("#chart-modal")
-        .style("left", (x + xOffset) + "px")
-        .style("top", (y + yOffset) + "px");
+        // Calculate initial modal position based on mouse coordinates
+        let x = event.pageX + xOffset;
+        let y = event.pageY + yOffset;
+
+        // Get the modal element's dimensions
+        const modal = d3.select("#chart-modal").node();
+        const modalWidth = modal.offsetWidth;
+        const modalHeight = modal.offsetHeight;
+
+        // Adjust x position if the modal goes off the right edge
+        if (x + modalWidth > viewportWidth) {
+            x = viewportWidth - modalWidth - xOffset;
+        }
+
+        // Adjust y position if the modal goes off the bottom edge
+        if (y + modalHeight > viewportHeight) {
+            y = viewportHeight - modalHeight - yOffset;
+        }
+
+        // Apply the adjusted position to the modal
+        d3.select("#chart-modal")
+            .style("left", x + "px")
+            .style("top", y + "px");
     })
     .on("mouseout", function () {
-      // Hide the modal when the mouse leaves the div
-      d3.select("#chart-modal").style("display", "none");
+        // Hide the modal when the mouse leaves the div
+        d3.select("#chart-modal").style("display", "none");
     });
 
-  d3.select("#arrow-icon")
-    .on("mouseover", function () {
-      // Shift left and apply scaleX(-1) (horizontal flip)
-      d3.select(this)
-        .style("transform", "scaleX(-1) translateX(10px)");
-    })
-    .on("mouseout", function () {
-      // Reset to original position and orientation
-      d3.select(this)
-        .style("transform", "scaleX(-1) translateX(0px)");
-    });
+    const sideButton = d3.select("#arrow-icon");
+
+    sideButton.on("click", toggleModal);
+}
+
+let isModalOpen = false;
+// Toggle function to open and close the modal
+function toggleModal() {
+    const sideModalContainer = d3.select("#side-modal-container");
+    const buttonContainer = d3.select("#button-container")
+    const arrowIcon = d3.select("#arrow-icon");
+
+    if (isModalOpen) {
+        // Close the modal
+        sideModalContainer.style("right", "-250px"); // Slide container off-screen
+        arrowIcon.style("transform", "scaleX(-1)"); // Flip arrow to point right
+        buttonContainer.style("margin-right", "100px"); 
+    } else {
+        // Open the modal
+        sideModalContainer.style("right", "0"); // Slide container into view
+        arrowIcon.style("transform", "scaleX(1)"); // Flip arrow to point left
+        buttonContainer.style("margin-right", "10px");
+    }
+
+    // Toggle the state
+    isModalOpen = !isModalOpen;
 }
 
 // Run the main function

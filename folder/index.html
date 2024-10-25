@@ -100,6 +100,7 @@
       padding: 10px;
       border-radius: 5px;
       display: none; /* Keep it hidden by default */
+      z-index: 3;
     }
 
     #button-container {
@@ -110,12 +111,46 @@
     }
 
     #arrow-icon {
-      /* Invert colors and adjust brightness to make black areas appear white */
-      filter: invert(100%) brightness(200%);
-      width: 50px;
-      height: 50px; 
-      transform: scaleX(-1);
-      transition: transform .5s;
+    /* Adjust icon styling */
+    filter: invert(100%) brightness(200%);
+    width: 50px;
+    height: 50px;
+    transform: scaleX(-1); /* Initially flipped for closed state */
+    transition: transform 0.5s; /* Smooth transform */
+    cursor: pointer;
+    }
+
+    #side-modal-container {
+      position: fixed;
+      top: 25%; /* Start off-screen */
+      right: -250px;
+      height: 50%;
+      width: 400px;
+      display: flex;
+      align-items: center;
+      transition: right 0.5s ease; /* Smooth transition for modal */
+    }
+
+    #button-container {
+      /* Container for the button */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      margin-right: 100px; /* Add space between button and modal */
+      transition: margin-right 0.5s ease;
+    }
+
+    #sideModal {
+      width: 75%;
+      background-color: #f8f9fa;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+      flex: 1;
+    }
+
+    #modalContent {
+      padding: 20px;
     }
 
     .hidden {
@@ -151,8 +186,15 @@
       <svg id="utah-map-svg" width="600" height="800"></svg>
     </div>
   </div>
-  <div id="button-container">
-    <img id="arrow-icon" src="/folder/icons/right-arrow.png" alt="Right Arrow Icon" />
+  <div id="side-modal-container">
+    <div id="button-container">
+      <img id="arrow-icon" src="/folder/icons/right-arrow.png" alt="Right Arrow Icon" />
+    </div>
+    <div id="sideModal">
+      <div id="modalContent">
+          <p>This is a sliding modal!</p>
+      </div>
+    </div>
   </div>
   <script type="module" src="script.js"></script>
   <script src="barchart.js"></script>
