@@ -93,11 +93,6 @@
       align-items: center;
     }
 
-    svg {
-      display: block;
-      border: 1px solid #ccc;
-    }
-
     #chart-modal {
       position: absolute;
       background-color: white;
@@ -129,6 +124,9 @@
   </style>
   <!-- d3 script -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://d3js.org/d3-geo.v2.min.js"></script>
+  <script src="https://d3js.org/topojson.v3.min.js"></script>
+  <script type="module" src="plot-geojson.js"></script>
 </head>
 
 <body>
@@ -143,90 +141,11 @@
     <div id="map-container">
       <svg id="utah-map-svg" width="600" height="800"></svg>
     </div>
-    <script>
-      const width = 600;
-      const height = 800;
-
-      const projection = d3.geoMercator()
-        .scale(5000)
-        .center([-111.0937, 39.3200])
-        .translate([width / 2, height / 2]);
-
-      const path = d3.geoPath().projection(projection);
-
-      const counties = [
-          "Salt Lake",
-          "Utah",
-          "Davis",
-          "Weber",
-          "Washington",
-          "Cache",
-          "Tooele",
-          "Box Elder",
-          "Iron",
-          "Summit",
-          "Uintah",
-          "Wasatch",
-          "Sanpete",
-          "Sevier",
-          "Carbon",
-          "Duchesne",
-          "San Juan",
-          "Millard",
-          "Morgan",
-          "Juab",
-          "Emery",
-          "Grand",
-          "Kane",
-          "Beaver",
-          "Garfield",
-          "Rich",
-          "Wayne",
-          "Piute",
-          "Daggett"
-        ];
-
-      // Load GeoJSON data
-      d3.json("data/counties.geojson").then(function(data) {
-
-        
-      
-        const filteredData = {
-              type: "FeatureCollection",
-              features: data.features.filter(d => d.properties.STATEFP === "49"),
-          };
-        
-          
-        // console.log(filteredData);
-
-        const svg = d3.select("#utah-map-svg");
-
-          svg.selectAll("path")
-              .data(filteredData.features)
-              .enter().append("path")
-              .attr("d", path)
-              .attr("stroke", "#000000")
-              .attr("fill", "#69b3a2")
-              .on("mouseover", function(event, d) {
-                  d3.select(this)
-                      .attr("fill", "#ffcc00")  // Change fill color on hover
-                      .attr("stroke", "#ff9900")  // Change stroke color on hover
-                      
-              })
-              .on("mouseout", function(event, d) {
-                  d3.select(this)
-                      .attr("fill", "#69b3a2")  // Revert fill color
-                      .attr("stroke", "#000000")  // Revert stroke color
-              });
-      }).catch(function(error) {
-          console.error("Error loading the GeoJSON data: ", error);
-      });
-    </script>
   </div>
   <div id="button-container">
     <img id="arrow-icon" src="/folder/icons/right-arrow.png" alt="Right Arrow Icon" />
   </div>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
   <script src="barchart.js"></script>
 </body>
 
