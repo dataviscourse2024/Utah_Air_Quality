@@ -41,7 +41,8 @@ function plotPoints(geojson, svg, projection) {
   const tooltip = d3.select("#tooltip")
   const tooltipLabel = d3.select("#tooltip-text-label")
   const tooltipText = d3.select("#tooltip-text-value")
-
+  const offsetX = 10
+  const offsetY = 10
 
   svg.selectAll("circle")
     .data(geojson.features)
@@ -59,11 +60,9 @@ function plotPoints(geojson, svg, projection) {
         .attr("fill", colors.circleHover)  // Change fill color on hover
         .attr("r", 8);  // Increase radius on hover
 
-      tooltip.style("display", "block")
-        .style("left", (event.pageX + 10) + "px")
-        .style("top", (event.pageY - 28) + "px");
-      tooltipLabel.text(d.properties.name);
-      tooltipText.text(`Avg PM2.5: ${d.properties.avgPM25.toFixed(2)}`)
+        tooltip.style("display", "block")
+        tooltipLabel.text(d.properties.name);
+        tooltipText.text(`Avg PM2.5: ${d.properties.avgPM25.toFixed(2)}`)
     })
     .on("mouseout", function(event, d) {
       d3.select(this)
@@ -73,8 +72,28 @@ function plotPoints(geojson, svg, projection) {
       tooltip.style("display", "none");
     })
     .on("mousemove", function(event) {
-      tooltip.style("left", (event.pageX + 10) + "px")
-        .style("top", (event.pageY - 28) + "px");
+      let x = event.pageX + offsetX;
+      let y = event.pageY + offsetY; 
+      // Get the modal element's dimensions
+      const modal = d3.select("#tooltip").node();
+      const modalWidth = modal.offsetWidth;
+      const modalHeight = modal.offsetHeight;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      // Adjust x position if the modal goes off the right edge
+      if (x + modalWidth > viewportWidth) {
+          x = viewportWidth - modalWidth - offsetX;
+      }
+
+      // Adjust y position if the modal goes off the bottom edge
+      if (y + modalHeight > viewportHeight) {
+          y = viewportHeight - modalHeight - offsetY;
+      }
+
+      tooltip.style("left", x + "px")
+        .style("top", y + "px");
+      
     });
 }
 
