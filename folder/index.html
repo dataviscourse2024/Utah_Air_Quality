@@ -10,13 +10,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
   <style>
     /* style div and headers */
-    html, body {
-      margin: 0;
+    html {
       height: 100%;
+    }
+
+    body {
+      margin: 0;
       font-family: "Noto Sans JP", sans-serif;
       font-optical-sizing: auto;
       font-weight: 400;
       font-style: normal;
+      min-height: 100%;
+      display: flex;
+      background-color: rgb(192, 219, 255);
     }
 
     .chart,
@@ -68,14 +74,12 @@
     }
 
     #screen-container {
-      width: 100%;
-      height: 100%;
       display: flex;
+      height: 100%;
     }
 
-    #left-col-container {
-      width: 75%;
-      background-color: burlywood;
+    #main-container {
+      width: 90%;
     }
 
     #right-col-container {
@@ -93,108 +97,134 @@
       display: block;
       border: 1px solid #ccc;
     }
+
+    #chart-modal {
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      display: none; /* Keep it hidden by default */
+    }
+
+    #button-container {
+      width: 10%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #arrow-icon {
+      /* Invert colors and adjust brightness to make black areas appear white */
+      filter: invert(100%) brightness(200%);
+      width: 50px;
+      height: 50px; 
+      transform: scaleX(-1);
+      transition: transform .5s;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
   <!-- d3 script -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 
 <body>
-  <div id="screen-container">
-    <div id="left-col-container">
-      <h1 id="page-title">Utah Air Quality</h1>
-      <div id="map-container">
-        <h2>Utah Map</h2>
-        <svg id="utah-map-svg" width="600" height="800"></svg>
-      </div>
-      <script>
-        const width = 600;
-        const height = 800;
+  <div id="chart-modal">
+    <div class="chart">
+      <h2>Bar Chart</h2>
+      <div id="barchart-container"></div>
+    </div>
+  </div>
+  <div id="main-container">
+    <h1 id="page-title">Utah Air Quality</h1>
+    <div id="map-container">
+      <svg id="utah-map-svg" width="600" height="800"></svg>
+    </div>
+    <script>
+      const width = 600;
+      const height = 800;
 
-        const projection = d3.geoMercator()
-          .scale(5000)
-          .center([-111.0937, 39.3200])
-          .translate([width / 2, height / 2]);
+      const projection = d3.geoMercator()
+        .scale(5000)
+        .center([-111.0937, 39.3200])
+        .translate([width / 2, height / 2]);
 
-        const path = d3.geoPath().projection(projection);
+      const path = d3.geoPath().projection(projection);
 
-        const counties = [
-            "Salt Lake",
-            "Utah",
-            "Davis",
-            "Weber",
-            "Washington",
-            "Cache",
-            "Tooele",
-            "Box Elder",
-            "Iron",
-            "Summit",
-            "Uintah",
-            "Wasatch",
-            "Sanpete",
-            "Sevier",
-            "Carbon",
-            "Duchesne",
-            "San Juan",
-            "Millard",
-            "Morgan",
-            "Juab",
-            "Emery",
-            "Grand",
-            "Kane",
-            "Beaver",
-            "Garfield",
-            "Rich",
-            "Wayne",
-            "Piute",
-            "Daggett"
-          ];
+      const counties = [
+          "Salt Lake",
+          "Utah",
+          "Davis",
+          "Weber",
+          "Washington",
+          "Cache",
+          "Tooele",
+          "Box Elder",
+          "Iron",
+          "Summit",
+          "Uintah",
+          "Wasatch",
+          "Sanpete",
+          "Sevier",
+          "Carbon",
+          "Duchesne",
+          "San Juan",
+          "Millard",
+          "Morgan",
+          "Juab",
+          "Emery",
+          "Grand",
+          "Kane",
+          "Beaver",
+          "Garfield",
+          "Rich",
+          "Wayne",
+          "Piute",
+          "Daggett"
+        ];
 
-        // Load GeoJSON data
-        d3.json("data/counties.geojson").then(function(data) {
+      // Load GeoJSON data
+      d3.json("data/counties.geojson").then(function(data) {
 
-          
         
-          const filteredData = {
-                type: "FeatureCollection",
-                features: data.features.filter(d => d.properties.STATEFP === "49"),
-            };
+      
+        const filteredData = {
+              type: "FeatureCollection",
+              features: data.features.filter(d => d.properties.STATEFP === "49"),
+          };
+        
           
-            
-          // console.log(filteredData);
+        // console.log(filteredData);
 
-          const svg = d3.select("#utah-map-svg");
+        const svg = d3.select("#utah-map-svg");
 
-            svg.selectAll("path")
-                .data(filteredData.features)
-                .enter().append("path")
-                .attr("d", path)
-                .attr("stroke", "#000000")
-                .attr("fill", "#69b3a2")
-                .on("mouseover", function(event, d) {
-                    d3.select(this)
-                        .attr("fill", "#ffcc00")  // Change fill color on hover
-                        .attr("stroke", "#ff9900")  // Change stroke color on hover
-                        
-                })
-                .on("mouseout", function(event, d) {
-                    d3.select(this)
-                        .attr("fill", "#69b3a2")  // Revert fill color
-                        .attr("stroke", "#000000")  // Revert stroke color
-                });
-        }).catch(function(error) {
-            console.error("Error loading the GeoJSON data: ", error);
-        });
-      </script>
-    </div>
-    <div id="right-col-container">
-      <div id="pie-chart-container">
-        <div class="chart">
-          <h2>Bar Chart</h2>
-          <div id="barchart-container"></div>
-        </div>
-        <!-- <svg id="pie-chart-svg"></svg> -->
-      </div>
-    </div>
+          svg.selectAll("path")
+              .data(filteredData.features)
+              .enter().append("path")
+              .attr("d", path)
+              .attr("stroke", "#000000")
+              .attr("fill", "#69b3a2")
+              .on("mouseover", function(event, d) {
+                  d3.select(this)
+                      .attr("fill", "#ffcc00")  // Change fill color on hover
+                      .attr("stroke", "#ff9900")  // Change stroke color on hover
+                      
+              })
+              .on("mouseout", function(event, d) {
+                  d3.select(this)
+                      .attr("fill", "#69b3a2")  // Revert fill color
+                      .attr("stroke", "#000000")  // Revert stroke color
+              });
+      }).catch(function(error) {
+          console.error("Error loading the GeoJSON data: ", error);
+      });
+    </script>
+  </div>
+  <div id="button-container">
+    <img id="arrow-icon" src="/folder/icons/right-arrow.png" alt="Right Arrow Icon" />
   </div>
   <script src="script.js"></script>
   <script src="barchart.js"></script>

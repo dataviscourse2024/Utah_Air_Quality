@@ -12,36 +12,80 @@ function setup() {
     // d3.select('#dataset').on('change', changeData);
     // d3.select('#random').on('change', changeData);
     //   { id: 'Barchart-div', class: 'bar-chart' },
-  const charts = [
-    { id: 'Linechart-div', class: 'line-chart' },
+    const charts = [
+        { id: 'Linechart-div', class: 'line-chart' },
+        
+        { id: 'Areachart-div', class: 'area-chart' },
+        { id: 'Scatterplot-div', class: 'scatter-plot' }
+    ];
+
+    charts.forEach(chart => {
+        const svg = d3.select(`#${chart.id}`)
+            .append('svg')
+            .attr('height', CHART_HEIGHT + MARGIN.top + MARGIN.bottom)
+            .attr('width', CHART_WIDTH + MARGIN.left + MARGIN.right);
+
+
+        const g = svg.append('g')
+            .attr('class', chart.class)
+            .attr('transform', `translate(${MARGIN.left}, ${MARGIN.top})`);
+
+        g.append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', `translate(0, ${CHART_HEIGHT})`);
+
+        g.append('g')
+            .attr('class', 'y-axis');
+
+        if (chart.class === 'line-chart' || chart.class === 'area-chart') {
+        g.append('path')
+            .attr('class', chart.class === 'line-chart' ? 'line' : 'area')
+        }
+    });
+    // Set optional offsets if you want to adjust the modal's position slightly from the cursor
+    const xOffset = 10; // Horizontal offset for the modal
+    const yOffset = 10; // Vertical offset for the modal
+
+    // Select the target div and bind the hover events
+    d3.select("#utah-map-svg")
+        .on("mouseover", function (event) {
+            // Get mouse coordinates relative to the document
+            const x = event.pageX;
+            const y = event.pageY;
+
+            // Select the modal and update its position
+            d3.select("#chart-modal")
+                .style("left", (x + xOffset) + "px")
+                .style("top", (y + yOffset) + "px")
+                .style("display", "block"); // Show the modal
+        })
+        .on("mousemove", function (event) {
+            // Update modal position as the mouse moves
+            const x = event.pageX;
+            const y = event.pageY;
+
+            d3.select("#chart-modal")
+                .style("left", (x + xOffset) + "px")
+                .style("top", (y + yOffset) + "px");
+        })
+        .on("mouseout", function () {
+            // Hide the modal when the mouse leaves the div
+            d3.select("#chart-modal").style("display", "none");
+        });
     
-    { id: 'Areachart-div', class: 'area-chart' },
-    { id: 'Scatterplot-div', class: 'scatter-plot' }
-  ];
+    // Select the image element
+    d3.select("#arrow-icon")
+        .on("mouseover", function () {
+            // Shift left and apply scaleX(-1) (horizontal flip)
+            d3.select(this)
+                .style("transform", "scaleX(-1) translateX(10px)");
+        })
+        .on("mouseout", function () {
+            // Reset to original position and orientation
+            d3.select(this)
+                .style("transform", "scaleX(-1) translateX(0px)");
+        });
 
-  charts.forEach(chart => {
-    const svg = d3.select(`#${chart.id}`)
-        .append('svg')
-        .attr('height', CHART_HEIGHT + MARGIN.top + MARGIN.bottom)
-        .attr('width', CHART_WIDTH + MARGIN.left + MARGIN.right);
-
-
-    const g = svg.append('g')
-        .attr('class', chart.class)
-        .attr('transform', `translate(${MARGIN.left}, ${MARGIN.top})`);
-
-    g.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', `translate(0, ${CHART_HEIGHT})`);
-
-    g.append('g')
-        .attr('class', 'y-axis');
-
-    if (chart.class === 'line-chart' || chart.class === 'area-chart') {
-      g.append('path')
-          .attr('class', chart.class === 'line-chart' ? 'line' : 'area')
-    }
-  });
 
   changeData();
 
