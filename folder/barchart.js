@@ -1,9 +1,11 @@
+const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
 const BARCHART_WIDTH = 325 - MARGIN.left - MARGIN.right;
 const BARCHART_HEIGHT = 300 - MARGIN.top - MARGIN.bottom;
 
 setup();
 
 function setup() {
+  console.log("SETUP")
     const svg = d3.select("#barchart-container").append("svg")
     .attr("id", "bar-chart-svg")
     .attr("width", BARCHART_WIDTH + MARGIN.left + MARGIN.right)

@@ -38,14 +38,10 @@ function plotPoints(geojson, svg, projection) {
   console.log("Plotting Points Data:", geojson);
 
   // Create a tooltip
-  const tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("position", "absolute")
-    .style("background-color", "white")
-    .style("border", "1px solid #ccc")
-    .style("padding", "10px")
-    .style("border-radius", "5px")
-    .style("display", "none");
+  const tooltip = d3.select("#tooltip")
+  const tooltipLabel = d3.select("#tooltip-text-label")
+  const tooltipText = d3.select("#tooltip-text-value")
+
 
   svg.selectAll("circle")
     .data(geojson.features)
@@ -64,9 +60,10 @@ function plotPoints(geojson, svg, projection) {
         .attr("r", 8);  // Increase radius on hover
 
       tooltip.style("display", "block")
-        .html(`<strong>${d.properties.name}</strong><br>Avg PM2.5: ${d.properties.avgPM25.toFixed(2)}`)
         .style("left", (event.pageX + 10) + "px")
         .style("top", (event.pageY - 28) + "px");
+      tooltipLabel.text(d.properties.name);
+      tooltipText.text(`Avg PM2.5: ${d.properties.avgPM25.toFixed(2)}`)
     })
     .on("mouseout", function(event, d) {
       d3.select(this)
@@ -120,44 +117,44 @@ function main() {
   const yOffset = 10; // Vertical offset for the modal
 
   // Select the target div and bind the hover events
-  d3.select("#utah-map-svg")
-    .on("mouseover", function (event) {
-        // Show the modal on hover
-        d3.select("#chart-modal").style("display", "block");
-    })
-    .on("mousemove", function (event) {
-        // Get the viewport dimensions
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
+  // d3.select("#utah-map-svg")
+  //   .on("mouseover", function (event) {
+  //       // Show the modal on hover
+  //       d3.select("#chart-modal").style("display", "block");
+  //   })
+  //   .on("mousemove", function (event) {
+  //       // Get the viewport dimensions
+  //       const viewportWidth = window.innerWidth;
+  //       const viewportHeight = window.innerHeight;
 
-        // Calculate initial modal position based on mouse coordinates
-        let x = event.pageX + xOffset;
-        let y = event.pageY + yOffset;
+  //       // Calculate initial modal position based on mouse coordinates
+  //       let x = event.pageX + xOffset;
+  //       let y = event.pageY + yOffset;
 
-        // Get the modal element's dimensions
-        const modal = d3.select("#chart-modal").node();
-        const modalWidth = modal.offsetWidth;
-        const modalHeight = modal.offsetHeight;
+  //       // Get the modal element's dimensions
+  //       const modal = d3.select("#chart-modal").node();
+  //       const modalWidth = modal.offsetWidth;
+  //       const modalHeight = modal.offsetHeight;
 
-        // Adjust x position if the modal goes off the right edge
-        if (x + modalWidth > viewportWidth) {
-            x = viewportWidth - modalWidth - xOffset;
-        }
+  //       // Adjust x position if the modal goes off the right edge
+  //       if (x + modalWidth > viewportWidth) {
+  //           x = viewportWidth - modalWidth - xOffset;
+  //       }
 
-        // Adjust y position if the modal goes off the bottom edge
-        if (y + modalHeight > viewportHeight) {
-            y = viewportHeight - modalHeight - yOffset;
-        }
+  //       // Adjust y position if the modal goes off the bottom edge
+  //       if (y + modalHeight > viewportHeight) {
+  //           y = viewportHeight - modalHeight - yOffset;
+  //       }
 
-        // Apply the adjusted position to the modal
-        d3.select("#chart-modal")
-            .style("left", x + "px")
-            .style("top", y + "px");
-    })
-    .on("mouseout", function () {
-        // Hide the modal when the mouse leaves the div
-        d3.select("#chart-modal").style("display", "none");
-    });
+  //       // Apply the adjusted position to the modal
+  //       d3.select("#chart-modal")
+  //           .style("left", x + "px")
+  //           .style("top", y + "px");
+  //   })
+  //   .on("mouseout", function () {
+  //       // Hide the modal when the mouse leaves the div
+  //       d3.select("#chart-modal").style("display", "none");
+  //   });
 
     const sideButton = d3.select("#arrow-icon");
 
