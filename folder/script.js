@@ -28,11 +28,48 @@ function groupbySeason(data) {
       return isDateInRange(date, seasonRanges[season]);
     });
     const avgPM25 = d3.mean(seasonData, d => +d["Daily Mean PM2.5 Concentration"]);
-    return { season: season, avgPM25: avgPM25 };
+    return { season: season, avgPM25Seasonal: avgPM25 };
   });
+
 
   return seasonalData;
 }
+
+function updateBySeason(season, geojson) {
+  const modalContent = d3.select("#modalContent");
+  const seasonData = geojson.features.map(d => d.properties.seasonalData.find(s => s.season === season));
+  const avgPM25 = d3.mean(seasonData, d => d ? d.avgPM25Seasonal : 0);
+
+  // Update the modal content
+  // modalContent.html(`<p>Average PM2.5 for ${season}: ${avgPM25.toFixed(2)}</p>`);
+
+  // Update the tooltip text
+  d3.selectAll("circle").each(function(d) {
+    const seasonalData = d.properties.seasonalData.find(s => s.season === season);
+    const avgPM25Seasonal = seasonalData ? seasonalData.avgPM25Seasonal : 0;
+    d3.select(this).on("mouseover", function(event) {
+      d3.select(this).attr("fill", "293742");
+      d3.select("#tooltip-text-label").text(d.properties.name);
+      d3.select("#tooltip-text-value").text(`Average PM2.5 for ${season}: ${avgPM25.toFixed(2)}`);
+      d3.select("#tooltip").style("display", "block");
+    }).on("mouseout", function(event) {
+      d3.select("#tooltip").style("display", "none");
+    });
+  });
+
+  console.log(`Updated modal content for ${season}: Avg PM2.5 = ${avgPM25.toFixed(2)}`); // Debugging log
+}
+
+
+
+d3.selectAll(".btn-group .btn").on("click", function(event) {
+  console.log("Button clicked:", d3.select(this).attr("id"));
+  const season = d3.select(this).attr("id");
+  // Load the GeoJSON data and update the modal content
+  convertCsvToGeoJson("data/test.csv", function(geojson) {
+    updateBySeason(season, geojson);
+  });
+});
 
 // Function to convert CSV data to GeoJSON
 export function convertCsvToGeoJson(csvFilePath, callback) {
@@ -77,3 +114,5 @@ export function convertCsvToGeoJson(csvFilePath, callback) {
     console.error("Error loading or parsing data:", error);
   });
 }
+
+

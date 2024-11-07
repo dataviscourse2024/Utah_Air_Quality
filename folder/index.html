@@ -167,13 +167,28 @@
       display: none;
     }
 
-    #tooltip-text-label {
+    .dropdown {
+      display: none;
+    }
+
+    .dropdown-menu {
+      display: none;
+    }
+
+    .button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      margin-right: 100px;
+      transition: margin-right 0.5s ease;
 
     }
 
-    #tooltip-text-value {
 
-    }
+
+
   </style>
   <!-- d3 script -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -200,6 +215,13 @@
     <div id="map-container">
       <svg id="utah-map-svg" width="600" height="800"></svg>
     </div>
+      <div class="btn-group" role="group" aria-label="Season Buttons">
+        <button class="btn btn-primary" id="Spring">Spring</button>
+        <button class="btn btn-primary" id="Summer">Summer</button>
+        <button class="btn btn-primary" id="Fall">Fall</button>
+        <button class="btn btn-primary" id="Winter">Winter</button>
+      </div>
+    </div>
   </div>
   <div id="side-modal-container">
     <div id="button-container">
@@ -208,7 +230,7 @@
     <div id="sideModal">
       <div id="modalContent">
           <p>Settings will go here!</p>
-          <button id=""></button>
+          </div>
       </div>
     </div>
   </div>
