@@ -91,6 +91,7 @@
     #map-container {
       display: flex;
       justify-content: center;
+      flex-direction: column;
       align-items: center;
     }
 
@@ -186,6 +187,16 @@
 
     }
 
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      margin-right: 100px;
+      transition: margin-right 0.5s ease;
+    }
+
 
 
 
@@ -215,11 +226,11 @@
     <div id="map-container">
       <svg id="utah-map-svg" width="600" height="800"></svg>
     </div>
-      <div class="btn-group" role="group" aria-label="Season Buttons">
-        <button class="btn btn-primary" id="Spring">Spring</button>
-        <button class="btn btn-primary" id="Summer">Summer</button>
-        <button class="btn btn-primary" id="Fall">Fall</button>
-        <button class="btn btn-primary" id="Winter">Winter</button>
+      <div class="btn-group " role="group" aria-label="Season Buttons">
+        <button class="btn btn-primary" id="Spring" style="background-color: #a4d13a;">Spring</button>
+        <button class="btn btn-primary" id="Summer" style="background-color: #02ab82;">Summer</button>
+        <button class="btn btn-primary" id="Fall" style="background-color: #fc5e1d;" >Fall</button>
+        <button class="btn btn-primary" id="Winter" style="background-color: #2f77c3;">Winter</button>
       </div>
     </div>
   </div>

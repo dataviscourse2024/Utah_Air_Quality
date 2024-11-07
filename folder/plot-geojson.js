@@ -44,6 +44,11 @@ function plotPoints(geojson, svg, projection) {
   const offsetX = 10
   const offsetY = 10
 
+
+  const colorScale = d3.scaleSequential(d3.interpolateReds)
+  .domain(d3.extent(geojson.features, d => d.properties.avgPM25));
+
+
   svg.selectAll("circle")
     .data(geojson.features)
     .enter().append("circle")
@@ -54,10 +59,10 @@ function plotPoints(geojson, svg, projection) {
     })
     .attr("cy", d => projection(d.geometry.coordinates)[1])
     .attr("r", 5)
-    .attr("fill", colors.circleFill)
+    .attr("fill", d => colorScale(d.properties.avgPM25))
     .on("mouseover", function(event, d) {
       d3.select(this)
-        .attr("fill", colors.circleHover)  // Change fill color on hover
+        .attr("fill", colors.circleHover)
         .attr("r", 8);  // Increase radius on hover
 
         tooltip.style("display", "block")
@@ -66,7 +71,7 @@ function plotPoints(geojson, svg, projection) {
     })
     .on("mouseout", function(event, d) {
       d3.select(this)
-        .attr("fill", colors.circleFill)  // Revert fill color
+        .attr("fill", d => colorScale(d.properties.avgPM25))  
         .attr("r", 5);  // Revert radius
 
       tooltip.style("display", "none");

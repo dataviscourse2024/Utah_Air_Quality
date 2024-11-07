@@ -42,17 +42,29 @@ function updateBySeason(season, geojson) {
 
   // Update the modal content
   // modalContent.html(`<p>Average PM2.5 for ${season}: ${avgPM25.toFixed(2)}</p>`);
+  const colorScale = d3.scaleSequential(d3.interpolateReds)
+  .domain(d3.extent(geojson.features, d => d.properties.avgPM25));
+
+  const sizeScale = d3.scaleLinear().domain(d3.extent(geojson.features, d => d.properties.avgPM25)).range([5, 15]);
+
+  d3.selectAll("circle").data(geojson.features)
+    .attr("fill", d => colorScale(d.properties.seasonalData.find(s => s.season === season).avgPM25Seasonal));
+
 
   // Update the tooltip text
   d3.selectAll("circle").each(function(d) {
     const seasonalData = d.properties.seasonalData.find(s => s.season === season);
     const avgPM25Seasonal = seasonalData ? seasonalData.avgPM25Seasonal : 0;
     d3.select(this).on("mouseover", function(event) {
-      d3.select(this).attr("fill", "293742");
+      d3.select(this).
+        attr("fill", "293742")
+        .attr("r", sizeScale(d.properties.avgPM25));
+
       d3.select("#tooltip-text-label").text(d.properties.name);
-      d3.select("#tooltip-text-value").text(`Average PM2.5 for ${season}: ${avgPM25.toFixed(2)}`);
+      d3.select("#tooltip-text-value").text(`Average PM2.5 for ${season}: ${avgPM25Seasonal.toFixed(2)}`);
       d3.select("#tooltip").style("display", "block");
     }).on("mouseout", function(event) {
+      d3.select(this).attr("fill", colorScale(d.properties.seasonalData.find(s => s.season === season).avgPM25Seasonal));
       d3.select("#tooltip").style("display", "none");
     });
   });
