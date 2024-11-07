@@ -40,13 +40,13 @@ function updateBySeason(season, geojson) {
   const seasonData = geojson.features.map(d => d.properties.seasonalData.find(s => s.season === season));
   const avgPM25 = d3.mean(seasonData, d => d ? d.avgPM25Seasonal : 0);
 
-  // Update the modal content
-  // modalContent.html(`<p>Average PM2.5 for ${season}: ${avgPM25.toFixed(2)}</p>`);
+
   const colorScale = d3.scaleSequential(d3.interpolateReds)
   .domain(d3.extent(geojson.features, d => d.properties.avgPM25));
 
-  const sizeScale = d3.scaleLinear().domain(d3.extent(geojson.features, d => d.properties.avgPM25)).range([5, 15]);
+  const sizeScale = d3.scaleLinear().domain(d3.extent(geojson.features, d => d.properties.avgPM25)).range([2, 15]);
 
+  // Update the circle colors based on the selected season
   d3.selectAll("circle").data(geojson.features)
     .attr("fill", d => colorScale(d.properties.seasonalData.find(s => s.season === season).avgPM25Seasonal));
 

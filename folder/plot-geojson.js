@@ -15,6 +15,7 @@ const colors = {
 function plotGeoJson(geojson, svg, path) {
   console.log("Plotting GeoJSON Data:", geojson);
 
+
   svg.selectAll("path")
     .data(geojson.features)
     .enter().append("path")
@@ -48,6 +49,8 @@ function plotPoints(geojson, svg, projection) {
   const colorScale = d3.scaleSequential(d3.interpolateReds)
   .domain(d3.extent(geojson.features, d => d.properties.avgPM25));
 
+  const sizeScale = d3.scaleLinear().domain(d3.extent(geojson.features, d => d.properties.avgPM25)).range([2, 15]);
+
 
   svg.selectAll("circle")
     .data(geojson.features)
@@ -58,12 +61,12 @@ function plotPoints(geojson, svg, projection) {
       return x;
     })
     .attr("cy", d => projection(d.geometry.coordinates)[1])
-    .attr("r", 5)
+    .attr("r", d => sizeScale(d.properties.avgPM25))
     .attr("fill", d => colorScale(d.properties.avgPM25))
     .on("mouseover", function(event, d) {
       d3.select(this)
-        .attr("fill", colors.circleHover)
-        .attr("r", 8);  // Increase radius on hover
+        .attr("fill", "000000")
+        .attr("r", 2);  // Increase radius on hover
 
         tooltip.style("display", "block")
         tooltipLabel.text(d.properties.name);
@@ -72,7 +75,7 @@ function plotPoints(geojson, svg, projection) {
     .on("mouseout", function(event, d) {
       d3.select(this)
         .attr("fill", d => colorScale(d.properties.avgPM25))  
-        .attr("r", 5);  // Revert radius
+        .attr("r", d => sizeScale(d.properties.avgPM25));  // Revert radius
 
       tooltip.style("display", "none");
     })
@@ -110,7 +113,7 @@ function main() {
   const projection = d3.geoMercator()
     .scale(5000)
     .center([-111.0937, 39.3200])
-    .translate([width / 2, height / 2]);
+    .translate([width / 1.7, height / 1.7]);
 
   const path = d3.geoPath().projection(projection);
 
