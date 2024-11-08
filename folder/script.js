@@ -74,9 +74,15 @@ function updateBySeason(season, geojson) {
 
 
 
-d3.selectAll(".btn-group .btn").on("click", function(event) {
-  console.log("Button clicked:", d3.select(this).attr("id"));
-  const season = d3.select(this).attr("id");
+d3.selectAll(".select-button").on("click", function(event) {
+  const seasonButton = d3.select(this)
+  console.log("Button clicked:", seasonButton.attr("id"));
+
+  d3.selectAll(".select-button").classed('selected', false);
+
+  seasonButton.classed('selected', true);
+
+  const season = seasonButton.attr("value");
   // Load the GeoJSON data and update the modal content
   convertCsvToGeoJson("data/test.csv", function(geojson) {
     updateBySeason(season, geojson);

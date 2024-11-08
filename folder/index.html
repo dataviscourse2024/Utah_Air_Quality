@@ -80,7 +80,10 @@
     }
 
     #main-container {
-      width: 90%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     #right-col-container {
@@ -125,7 +128,7 @@
     #side-modal-container {
       position: fixed;
       top: 25%; /* Start off-screen */
-      right: -250px;
+      right: -270px;
       height: 50%;
       width: 400px;
       display: flex;
@@ -166,6 +169,8 @@
       padding: 10px;
       border-radius: 5px;
       display: none;
+      z-index: 1;
+      transition: display 0.5s ease;
     }
 
     .dropdown {
@@ -195,8 +200,40 @@
       cursor: pointer;
       margin-right: 100px;
       transition: margin-right 0.5s ease;
+      margin: 0px;
     }
 
+    #map-controls-container {
+      width: 500px
+    }
+
+    #slider-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .select-button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      width: 100px;
+      background-color: #f0f0f0;
+      border-radius: 2px;
+      color: #333;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .select-button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .select-button.selected {
+      background-color: #4CAF50;
+      color: white;
+      border-color: #4CAF50;
+    }
 
 
 
@@ -224,16 +261,20 @@
   <div id="main-container">
     <h1 id="page-title">Utah Air Quality</h1>
     <div id="map-container">
-      <svg id="utah-map-svg" width="600" height="800"></svg>
-    <label for="customRange3" class="form-label">Example range</label>
-    <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">   
+      <svg id="utah-map-svg" width="500" height="600"></svg>
     </div>
-      <div class="btn-group " role="group" aria-label="Season Buttons">
-        <button class="btn btn-primary" id="Spring" style="background-color: #a4d13a;">Spring</button>
-        <button class="btn btn-primary" id="Summer" style="background-color: #02ab82;">Summer</button>
-        <button class="btn btn-primary" id="Fall" style="background-color: #fc5e1d;" >Fall</button>
-        <button class="btn btn-primary" id="Winter" style="background-color: #2f77c3;">Winter</button>
+    <div id="map-controls-container">
+      <div id="slider-container">
+        <label for="customRange3" class="form-label">Example range</label>
+        <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">  
       </div>
+      <div class="btn-group" role="group" aria-label="Season Buttons">
+        <button class="select-button" id="spring-button" value="spring">Spring</button>
+        <button class="select-button" id="summer-button" value="summer">Summer</button>
+        <button class="select-button" id="fall-button" value="fall">Fall</button>
+        <button class="select-button selected" id="winter-button" value="winter">Winter</button>
+      </div>
+    </div>
     </div>
   </div>
   <div id="side-modal-container">

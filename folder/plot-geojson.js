@@ -3,7 +3,7 @@ import { convertCsvToGeoJson } from './script.js';
 
 // Color combination
 const colors = {
-  mapFill: "#c2cfd3",
+  mapFill: "#faf3e1",
   mapBorder: "#5e5a51",
   hoverFill: "#ffcc00",
   hoverBorder: "#ff9900",
@@ -12,30 +12,32 @@ const colors = {
 };
 
 // Function to plot GeoJSON data on the map
-function plotGeoJson(geojson, svg, path) {
+function plotGeoJson(geojson, geoJsonGroup, path) {
   console.log("Plotting GeoJSON Data:", geojson);
 
-
-  svg.selectAll("path")
+  geoJsonGroup.selectAll("path")
     .data(geojson.features)
     .enter().append("path")
     .attr("d", path)
     .attr("stroke", colors.mapBorder)
     .attr("fill", colors.mapFill)
-    .on("mouseover", function(event, d) {
-      d3.select(this)
-        .attr("fill", colors.hoverFill)  // Change fill color on hover
-        .attr("stroke", colors.hoverBorder)  // Change stroke color on hover
-    })
-    .on("mouseout", function(event, d) {
-      d3.select(this)
-        .attr("fill", colors.mapFill)  // Revert fill color
-        .attr("stroke", colors.mapBorder)  // Revert stroke color
-    });
+    .style("z-index", 3)
+
+  geoJsonGroup.attr("transform", `translate(${-50}, ${-150})`)
+    // .on("mouseover", function(event, d) {
+    //   d3.select(this)
+    //     .attr("fill", colors.hoverFill)  // Change fill color on hover
+    //     .attr("stroke", colors.hoverBorder)  // Change stroke color on hover
+    // })
+    // .on("mouseout", function(event, d) {
+    //   d3.select(this)
+    //     .attr("fill", colors.mapFill)  // Revert fill color
+    //     .attr("stroke", colors.mapBorder)  // Revert stroke color
+    // });
 }
 
 // Function to plot points from GeoJSON data
-function plotPoints(geojson, svg, projection) {
+function plotPoints(geojson, geoJsonGroup, projection) {
   console.log("Plotting Points Data:", geojson);
 
   // Create a tooltip
@@ -44,6 +46,7 @@ function plotPoints(geojson, svg, projection) {
   const tooltipText = d3.select("#tooltip-text-value")
   const offsetX = 10
   const offsetY = 10
+  const pointRadius = 5
 
 
   const colorScale = d3.scaleSequential(d3.interpolateReds)
@@ -52,7 +55,7 @@ function plotPoints(geojson, svg, projection) {
   const sizeScale = d3.scaleLinear().domain(d3.extent(geojson.features, d => d.properties.avgPM25)).range([2, 15]);
 
 
-  svg.selectAll("circle")
+  geoJsonGroup.selectAll("circle")
     .data(geojson.features)
     .enter().append("circle")
     .attr("cx", d => {
@@ -61,12 +64,15 @@ function plotPoints(geojson, svg, projection) {
       return x;
     })
     .attr("cy", d => projection(d.geometry.coordinates)[1])
-    .attr("r", d => sizeScale(d.properties.avgPM25))
+    // .attr("r", d => sizeScale(d.properties.avgPM25))
+    .attr("r", pointRadius)
     .attr("fill", d => colorScale(d.properties.avgPM25))
+    .style("zindex", 2)
     .on("mouseover", function(event, d) {
       d3.select(this)
-        .attr("fill", "000000")
-        .attr("r", 2);  // Increase radius on hover
+        // .attr("fill", "000000")
+        // .attr("r", 2);  // Increase radius on hover
+        .attr("r", pointRadius *2)
 
         tooltip.style("display", "block")
         tooltipLabel.text(d.properties.name);
@@ -75,8 +81,8 @@ function plotPoints(geojson, svg, projection) {
     .on("mouseout", function(event, d) {
       d3.select(this)
         .attr("fill", d => colorScale(d.properties.avgPM25))  
-        .attr("r", d => sizeScale(d.properties.avgPM25));  // Revert radius
-
+        // .attr("r", d => sizeScale(d.properties.avgPM25));  // Revert radius
+        .attr("r", pointRadius)
       tooltip.style("display", "none");
     })
     .on("mousemove", function(event) {
@@ -91,12 +97,12 @@ function plotPoints(geojson, svg, projection) {
 
       // Adjust x position if the modal goes off the right edge
       if (x + modalWidth > viewportWidth) {
-          x = viewportWidth - modalWidth - offsetX;
+          x = event.pageX - modalWidth - offsetX;
       }
 
       // Adjust y position if the modal goes off the bottom edge
       if (y + modalHeight > viewportHeight) {
-          y = viewportHeight - modalHeight - offsetY;
+        y = event.pagey - modalHeight - offsetY;
       }
 
       tooltip.style("left", x + "px")
@@ -118,6 +124,7 @@ function main() {
   const path = d3.geoPath().projection(projection);
 
   const svg = d3.select("#utah-map-svg");
+  const geoJsonGroup = svg.append("g")
 
   // Load and plot filtered GeoJSON data
   d3.json("data/counties.geojson").then(function(data) {
@@ -130,14 +137,14 @@ function main() {
 
     console.log("Filtered GeoJSON Data:", filteredData);
 
-    plotGeoJson(filteredData, svg, path);
+    plotGeoJson(filteredData, geoJsonGroup, path);
   }).catch(function(error) {
     console.error("Error loading the GeoJSON data:", error);
   });
 
   // Convert CSV to GeoJSON and plot the data
   convertCsvToGeoJson("data/test.csv", function(geojson) {
-    plotPoints(geojson, svg, projection);
+    plotPoints(geojson, geoJsonGroup, projection);
   });
   // Set optional offsets if you want to adjust the modal's position slightly from the cursor
   const xOffset = 10; // Horizontal offset for the modal
@@ -197,14 +204,14 @@ function toggleModal() {
 
     if (isModalOpen) {
         // Close the modal
-        sideModalContainer.style("right", "-250px"); // Slide container off-screen
+        sideModalContainer.style("right", "-270px"); // Slide container off-screen
         arrowIcon.style("transform", "scaleX(-1)"); // Flip arrow to point right
         buttonContainer.style("margin-right", "100px"); 
     } else {
         // Open the modal
         sideModalContainer.style("right", "0"); // Slide container into view
         arrowIcon.style("transform", "scaleX(1)"); // Flip arrow to point left
-        buttonContainer.style("margin-right", "10px");
+        buttonContainer.style("margin-right", "20px");
     }
 
     // Toggle the state
