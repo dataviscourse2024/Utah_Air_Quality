@@ -1,5 +1,7 @@
 import * as d3 from 'https://cdn.skypack.dev/d3@7';
 import { convertCsvToGeoJson } from './script.js';
+import { globalState } from './config.js';
+import { setup } from './piechart.js';
 
 // Color combination
 const colors = {
@@ -24,21 +26,15 @@ function plotGeoJson(geojson, geoJsonGroup, path) {
     .style("z-index", 3)
 
   geoJsonGroup.attr("transform", `translate(${-50}, ${-150})`)
-    // .on("mouseover", function(event, d) {
-    //   d3.select(this)
-    //     .attr("fill", colors.hoverFill)  // Change fill color on hover
-    //     .attr("stroke", colors.hoverBorder)  // Change stroke color on hover
-    // })
-    // .on("mouseout", function(event, d) {
-    //   d3.select(this)
-    //     .attr("fill", colors.mapFill)  // Revert fill color
-    //     .attr("stroke", colors.mapBorder)  // Revert stroke color
-    // });
 }
+
+
 
 // Function to plot points from GeoJSON data
 function plotPoints(geojson, geoJsonGroup, projection) {
   console.log("Plotting Points Data:", geojson);
+  console.log("Projection:", projection);
+  console.log("GeoJSON Group:", geoJsonGroup);
 
   // Create a tooltip
   const tooltip = d3.select("#tooltip")
@@ -54,7 +50,8 @@ function plotPoints(geojson, geoJsonGroup, projection) {
 
   const sizeScale = d3.scaleLinear().domain(d3.extent(geojson.features, d => d.properties.avgPM25)).range([2, 15]);
 
-
+  geoJsonGroup.selectAll("circle").remove();
+  
   geoJsonGroup.selectAll("circle")
     .data(geojson.features)
     .enter().append("circle")
@@ -72,7 +69,7 @@ function plotPoints(geojson, geoJsonGroup, projection) {
       d3.select(this)
         // .attr("fill", "000000")
         // .attr("r", 2);  // Increase radius on hover
-        .attr("r", pointRadius *2)
+        .attr("r", pointRadius * 2)
 
         tooltip.style("display", "block")
         tooltipLabel.text(d.properties.name);
@@ -111,6 +108,23 @@ function plotPoints(geojson, geoJsonGroup, projection) {
     });
 }
 
+
+function updateCircleSizes(year, geoJsonGroup, projection) {
+  const filePath = `data/${year}.csv`;
+  console.log("File Path:", filePath); // Debugging log
+  convertCsvToGeoJson(filePath, function(geojson) {
+    const sizeScale = d3.scaleLinear()
+      .domain(d3.extent(geojson.features, d => d.properties.avgPM25))
+      .range([2, 15]);
+
+    geoJsonGroup.selectAll("circle")
+      .data(geojson.features)
+      .transition()
+      .duration(1000)
+      .attr("r", d => sizeScale(d.properties.avgPM25));
+  });
+}
+
 // Main function to load and plot data
 function main() {
   const width = 600;
@@ -142,10 +156,43 @@ function main() {
     console.error("Error loading the GeoJSON data:", error);
   });
 
-  // Convert CSV to GeoJSON and plot the data
-  convertCsvToGeoJson("data/test.csv", function(geojson) {
-    plotPoints(geojson, geoJsonGroup, projection);
+  d3.selectAll(".dropdown-item").on("click", function(event) {
+    const year = d3.select(this).attr("data-year");
+    console.log("Year selected:", year); // Debugging log
+    // Load the GeoJSON data and update the modal content based on the selected year
+
+    d3.select("#selected-year").text(year);
+
+
+    const filePath = `data/${year}.csv`;
+
+    globalState.data = filePath;
+    globalState.year = year;
+    globalState.medalPlot = "pieChart";
+
+    console.log("File Path:", filePath); // Debugging log
+
+    console.log("Global State:", globalState);
+
+
+    
+
+    convertCsvToGeoJson(filePath, function(geojson) {
+      console.log("Check after selecting year, call this plot function");
+      plotPoints(geojson, geoJsonGroup, projection);
+    });
+
+    setup(globalState);
   });
+
+  
+
+
+  
+  // Convert CSV to GeoJSON and plot the data
+  // convertCsvToGeoJson("data/test.csv", function(geojson) {
+  //   plotPoints(geojson, geoJsonGroup, projection);
+  // });
   // Set optional offsets if you want to adjust the modal's position slightly from the cursor
   const xOffset = 10; // Horizontal offset for the modal
   const yOffset = 10; // Vertical offset for the modal
@@ -216,7 +263,14 @@ function toggleModal() {
 
     // Toggle the state
     isModalOpen = !isModalOpen;
+
+    
 }
+
+// d3.select("#Spring").dispatch("click");
+
+
+
 
 // Run the main function
 main();

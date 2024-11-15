@@ -1,8 +1,13 @@
+import { convertCsvToGeoJson } from './script.js';
+import { globalState } from './config.js';
+
+
 const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
 const BARCHART_WIDTH = 325 - MARGIN.left - MARGIN.right;
 const BARCHART_HEIGHT = 300 - MARGIN.top - MARGIN.bottom;
 
 setup();
+
 
 function setup() {
   console.log("SETUP")
@@ -18,15 +23,10 @@ function setup() {
     const group = svg.append("g")
     .attr("transform", `translate(${MARGIN.left},${MARGIN.top})`);
     
-    
-    const data = []
 
-    for(let i = 0; i < 10; i ++) {
-        data.push({"day":i, "concentration":Math.floor(Math.random() * 10)})
-    }
     
-    updateTestBarChart(data, group)   
 }
+
 
 function updateTestBarChart(data, chart) {
     // X scale (names)

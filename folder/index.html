@@ -174,11 +174,12 @@
     }
 
     .dropdown {
-      display: none;
+      display: flex;
     }
 
     .dropdown-menu {
-      display: none;
+      display: flex;
+      flex-direction: column;
     }
 
     .button {
@@ -243,6 +244,8 @@
   <script src="https://d3js.org/d3-geo.v2.min.js"></script>
   <script src="https://d3js.org/topojson.v3.min.js"></script>
   <script type="module" src="plot-geojson.js"></script>
+  <script type="module" src="piechart.js"></script>
+
 </head>
 
 <body>
@@ -265,15 +268,20 @@
     </div>
     <div id="map-controls-container">
       <div id="slider-container">
-        <label for="customRange3" class="form-label">Example range</label>
+        <label for="customRange3" class="form-label" id="selected-year">Year</label>
         <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">  
       </div>
-      <div class="btn-group" role="group" aria-label="Season Buttons">
+      <!-- <div class="btn-group" role="group" aria-label="Season Buttons">
         <button class="select-button" id="spring-button" value="spring">Spring</button>
         <button class="select-button" id="summer-button" value="summer">Summer</button>
         <button class="select-button" id="fall-button" value="fall">Fall</button>
         <button class="select-button selected" id="winter-button" value="winter">Winter</button>
-      </div>
+      </div> -->
+      <div class="btn-group " role="group" aria-label="Season Buttons">
+        <button class="btn btn-primary" id="Spring" style="background-color: #a4d13a;">🌱</button>
+        <button class="btn btn-primary" id="Summer" style="background-color: #02ab82;">☀️</button>
+        <button class="btn btn-primary" id="Fall" style="background-color: #fc5e1d;" >🍁</button>
+        <button class="btn btn-primary" id="Winter" style="background-color: #2f77c3;">⛄</button>
     </div>
     </div>
   </div>
@@ -282,14 +290,20 @@
       <img id="arrow-icon" src="/folder/icons/right-arrow.png" alt="Right Arrow Icon" />
     </div>
     <div id="sideModal">
-      <div id="modalContent">
-          <p>Settings will go here!</p>
+          <div class="dropdown-menu" aria-labelledby="yearDropdownButton">
+            <a class="dropdown-item" href="#" data-year="2023">2023</a>
+            <a class="dropdown-item" href="#" data-year="2022">2022</a>
+            <a class="dropdown-item" href="#" data-year="2021">2021</a>
+            <a class="dropdown-item" href="#" data-year="2020">2020</a>
+            <a class="dropdown-item" href="#" data-year="2019">2019</a>
+            <a class="dropdown-item" href="#" data-year="2018">2018</a>
           </div>
-      </div>
-    </div>
+        </div>
+      <!-- </div>
+    </div> -->
   </div>
   <script type="module" src="script.js"></script>
-  <script src="piechart.js"></script>
+  
 </body>
 
 </html>

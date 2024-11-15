@@ -1,10 +1,14 @@
+import { convertCsvToGeoJsonForPieChart } from './script.js';
+import { globalState } from './config.js';
+
+
 const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
 const CHART_WIDTH = 325 - MARGIN.left - MARGIN.right;
 const CHART_HEIGHT = 300 - MARGIN.top - MARGIN.bottom;
 
-setup();
 
-function setup() {
+
+export function setup(globalState) {
     const svg = d3.select("#barchart-container").append("svg")
     .attr("id", "chart-svg")
     .attr("width", CHART_WIDTH + MARGIN.left + MARGIN.right)
@@ -18,24 +22,19 @@ function setup() {
     const group = svg.append("g")
     .attr("transform", `translate(${MARGIN.left},${MARGIN.top})`);
 
-    const data = []
+    console.log("Global State:", globalState);
 
-    for(let i = 0; i < 10; i ++) {
-        data.push({"day":i, "concentration":Math.floor(Math.random() * 10)})
-    }
-    
-    updatePieChart(data, group)   
+    convertCsvToGeoJsonForPieChart(globalState.data, function(geojson) {
+        console.log("GeoJSON Data:", geojson);
+        updatePieChart(geojson, group);
+    });
+ 
 };
 
-function updatePieChart(data, group) {
+function updatePieChart(geojson, group) {
     // Step 1: Group data into three categories: Low, Medium, High
-    const groupedData = { low: 0, medium: 0, high: 0 };
 
-    data.forEach(d => {
-        if (d.concentration <= 3) groupedData.low++;
-        else if (d.concentration <= 6) groupedData.medium++;
-        else groupedData.high++;
-    });
+    console.log("Data:", geojson);
     
     // Convert grouped data into an array suitable for the pie chart
     const pieData = Object.entries(groupedData).map(([key, value]) => ({
