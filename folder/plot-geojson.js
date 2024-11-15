@@ -64,7 +64,7 @@ function plotPoints(geojson, geoJsonGroup, projection) {
     // .attr("r", d => sizeScale(d.properties.avgPM25))
     .attr("r", pointRadius)
     .attr("fill", d => colorScale(d.properties.avgPM25))
-    .style("zindex", 2)
+    .attr("class", "map-circle")
     .on("mouseover", function(event, d) {
       d3.select(this)
         // .attr("fill", "000000")
@@ -74,6 +74,7 @@ function plotPoints(geojson, geoJsonGroup, projection) {
         tooltip.style("display", "block")
         tooltipLabel.text(d.properties.name);
         tooltipText.text(`Avg PM2.5: ${d.properties.avgPM25.toFixed(2)}`)
+        setup(globalState, d.properties.name);
     })
     .on("mouseout", function(event, d) {
       d3.select(this)
@@ -155,9 +156,9 @@ function main() {
   }).catch(function(error) {
     console.error("Error loading the GeoJSON data:", error);
   });
-
-  d3.selectAll(".dropdown-item").on("click", function(event) {
-    const year = d3.select(this).attr("data-year");
+  console.log("VALUE", d3.select(".dropdown-menu").attr("value"));
+  d3.selectAll(".dropdown-menu").on("change", function(event) {
+    const year = this.value;
     console.log("Year selected:", year); // Debugging log
     // Load the GeoJSON data and update the modal content based on the selected year
 
@@ -182,7 +183,6 @@ function main() {
       plotPoints(geojson, geoJsonGroup, projection);
     });
 
-    setup(globalState);
   });
 
   
@@ -242,7 +242,7 @@ function main() {
     sideButton.on("click", toggleModal);
 }
 
-let isModalOpen = false;
+let isModalOpen = true;
 // Toggle function to open and close the modal
 function toggleModal() {
     const sideModalContainer = d3.select("#side-modal-container");
@@ -252,12 +252,12 @@ function toggleModal() {
     if (isModalOpen) {
         // Close the modal
         sideModalContainer.style("right", "-270px"); // Slide container off-screen
-        arrowIcon.style("transform", "scaleX(-1)"); // Flip arrow to point right
+        arrowIcon.style("transform", "scaleX(1)"); // Flip arrow to point right
         buttonContainer.style("margin-right", "100px"); 
     } else {
         // Open the modal
         sideModalContainer.style("right", "0"); // Slide container into view
-        arrowIcon.style("transform", "scaleX(1)"); // Flip arrow to point left
+        arrowIcon.style("transform", "scaleX(-1)"); // Flip arrow to point left
         buttonContainer.style("margin-right", "20px");
     }
 

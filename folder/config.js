@@ -1,8 +1,8 @@
 export const globalState = {
-    data: null,
+    data: "data/2023.csv",
     geojson: null,
     selectedSeason: null,
-    selectedYear: null,
+    selectedYear: 2023,
     medalPlot: null
 };
   

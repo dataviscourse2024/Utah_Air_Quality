@@ -8,9 +8,9 @@ const CHART_HEIGHT = 300 - MARGIN.top - MARGIN.bottom;
 
 
 
-export function setup(globalState) {
-    const svg = d3.select("#barchart-container").append("svg")
-    .attr("id", "chart-svg")
+export function setup(globalState, stationName) {
+    console.log("SETTING UP PIE CHART")
+    const svg = d3.select("#tooltip-chart-svg")
     .attr("width", CHART_WIDTH + MARGIN.left + MARGIN.right)
     .attr("height", CHART_HEIGHT + MARGIN.top + MARGIN.bottom);
 
@@ -19,22 +19,27 @@ export function setup(globalState) {
     .attr("height", "100%")
     .attr("fill", "white");
 
-    const group = svg.append("g")
-    .attr("transform", `translate(${MARGIN.left},${MARGIN.top})`);
+    
 
     console.log("Global State:", globalState);
 
     convertCsvToGeoJsonForPieChart(globalState.data, function(geojson) {
         console.log("GeoJSON Data:", geojson);
-        updatePieChart(geojson, group);
+        updatePieChart(geojson, stationName);
     });
  
 };
 
-function updatePieChart(geojson, group) {
+export function updatePieChart(geojson, stationName) {
     // Step 1: Group data into three categories: Low, Medium, High
+    const svg = d3.select("#tooltip-chart-svg")
+
+    svg.select("g").remove();
+    const chart = svg.append("g")
+    .attr("transform", `translate(${MARGIN.left},${MARGIN.top})`);
 
     console.log("Data:", geojson);
+    const groupedData = geojson.features[stationName];
     
     // Convert grouped data into an array suitable for the pie chart
     const pieData = Object.entries(groupedData).map(([key, value]) => ({
@@ -61,9 +66,9 @@ function updatePieChart(geojson, group) {
         .domain(["low", "medium", "high"])
         .range(["#33ff7d", "#ffea33", "#ff5733"]);
     
-    group.attr("transform", `translate(${width / 2}, ${height / 2})`);
+    chart.attr("transform", `translate(${width / 2}, ${height / 2})`);
 
-    group.selectAll("path")
+    chart.selectAll("path")
         .data(pie(pieData))
         .join("path")
         .attr("d", arc)
@@ -72,7 +77,7 @@ function updatePieChart(geojson, group) {
         .style("stroke-width", "2px");
  
     // Step 6: Add labels (optional)
-    group.selectAll("text")
+    chart.selectAll("text")
         .data(pie(pieData))
         .join("text")
         .text(d => `${d.data.value}`)
@@ -82,7 +87,7 @@ function updatePieChart(geojson, group) {
         .style("fill", "white");
 
     // Create legend container
-    const legendGroup = group.append("g")
+    const legendGroup = chart.append("g")
         .attr("transform", `translate(${radius}, ${-radius})`);
 
     // Render legend

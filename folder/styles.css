@@ -1,0 +1,231 @@
+/* style div and headers */
+    html {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans JP", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      min-height: 100%;
+      display: flex;
+      background-color: rgb(192, 219, 255);
+    }
+
+    .chart,
+    h2 {
+      text-align: center;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .toolbox span {
+      padding: 5px;
+    }
+
+    /* style of bar charts */
+    .bar {
+      fill: rgb(79, 175, 211);
+    }
+
+    .bar:hover {
+      fill: #979696;
+    }
+
+    /* style of line charts */
+    .line-chart {
+      stroke: rgb(79, 175, 211);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    #page-title {
+      text-align: center;
+    }
+
+    /* style of area charts */
+    .area-chart {
+      fill: rgb(79, 175, 211);
+    }
+
+    /* style of scatter plot */
+    .scatter-plot circle {
+      fill: rgb(79, 175, 211);
+    }
+
+    .scatter-plot .hovered {
+      fill: #979696;
+    }
+
+    #screen-container {
+      display: flex;
+      height: 100%;
+    }
+
+    #main-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #right-col-container {
+      width: 25%;
+      background-color: aqua;
+    }
+
+    #map-container {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #chart-modal {
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      display: none; /* Keep it hidden by default */
+      z-index: 3;
+    }
+
+    #button-container {
+      width: 10%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #arrow-icon {
+    /* Adjust icon styling */
+    filter: invert(100%) brightness(200%);
+    width: 50px;
+    height: 50px;
+    transform: scaleX(-1); /* Initially flipped for closed state */
+    transition: transform 0.5s; /* Smooth transform */
+    cursor: pointer;
+    }
+
+    #side-modal-container {
+      position: fixed;
+      top: 50%; /* Start off-screen */
+      right: 0px;
+      display: flex;
+      align-items: center;
+      transition: right 0.5s ease; /* Smooth transition for modal */
+    }
+
+    #button-container {
+      /* Container for the button */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      margin-right: 20px; /* Add space between button and modal */
+      transition: margin-right 0.5s ease;
+      transform: scale(-1);
+    }
+
+    #sideModal {
+      width: 75%;
+      background-color: #f8f9fa;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+      flex: 1;
+    }
+
+    #modalContent {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #tooltip {
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+      z-index: 1;
+      transition: display 0.5s ease;
+    }
+
+    .dropdown {
+      display: flex;
+    }
+
+    .dropdown-menu {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      width: 30px;
+    }
+
+    .button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      margin-right: 100px;
+      transition: margin-right 0.5s ease;
+
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+      margin-right: 100px;
+      transition: margin-right 0.5s ease;
+      margin: 0px;
+    }
+
+    #map-controls-container {
+      width: 500px
+    }
+
+    #slider-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .select-button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      width: 100px;
+      background-color: #f0f0f0;
+      border-radius: 2px;
+      color: #333;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .select-button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .select-button.selected {
+      background-color: #4CAF50;
+      color: white;
+      border-color: #4CAF50;
+    }
+

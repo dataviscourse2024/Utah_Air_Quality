@@ -100,12 +100,10 @@ export function convertCsvToGeoJsonForPieChart(tempFilePath, callback) {
   d3.csv(tempFilePath).then(function(data) {
     // Parse the data and calculate the average PM2.5 concentration for each location
     const locations = d3.group(data, d => d["Local Site Name"]);
-    const geojsonFeatures = [];
+    const geojsonFeatures = {};
     
 
     locations.forEach((values, key) => {
-      const latitude = +values[0]["Site Latitude"];
-      const longitude = +values[0]["Site Longitude"];
       const groupedData = { Good: 0, Fair: 0, Poor: 0};
 
       values.forEach(d => {
@@ -114,17 +112,7 @@ export function convertCsvToGeoJsonForPieChart(tempFilePath, callback) {
         else groupedData.Poor++;
       });
 
-      geojsonFeatures.push({
-        type: "Feature",
-        properties: {
-          name: key,
-          groupedData: groupedData
-        },
-        geometry: {
-          type: "Point",
-          coordinates: [longitude, latitude]
-        }
-      });
+      geojsonFeatures[key] = groupedData;
     });
 
     const geojson = {
