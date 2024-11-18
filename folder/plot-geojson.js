@@ -166,7 +166,25 @@ function main() {
   }).catch(function(error) {
     console.error("Error loading the GeoJSON data:", error);
   });
-  console.log("VALUE", d3.select(".dropdown-menu").attr("value"));
+  
+  // SET DEFAULTS
+  console.log("VALUE", d3.select(".dropdown-menu").property("value"));
+  const year = d3.select(".dropdown-menu").property("value")
+  d3.select("#selected-year").text(year);
+
+  const filePath = `data/${year}.csv`;
+
+  globalState.data = filePath;
+  globalState.year = year;
+  globalState.medalPlot = "pieChart";
+
+  convertCsvToGeoJson(filePath, function(geojson) {
+    console.log("Check after selecting year, call this plot function");
+    plotPoints(geojson, geoJsonGroup, projection);
+  });
+
+  // On selection change
+
   d3.selectAll(".dropdown-menu").on("change", function(event) {
     const year = this.value;
     console.log("Year selected:", year); // Debugging log
