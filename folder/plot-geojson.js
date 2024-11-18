@@ -24,8 +24,6 @@ function plotGeoJson(geojson, geoJsonGroup, path) {
     .attr("stroke", colors.mapBorder)
     .attr("fill", colors.mapFill)
     .style("z-index", 3)
-
-  geoJsonGroup.attr("transform", `translate(${-50}, ${-150})`)
 }
 
 
@@ -130,15 +128,18 @@ function updateCircleSizes(year, geoJsonGroup, projection) {
 function main() {
   const width = 600;
   const height = 800;
+  const targetSize = .75 * window.innerHeight;
+  const scale = targetSize/616;
 
   const projection = d3.geoMercator()
-    .scale(5000)
-    .center([-111.0937, 39.3200])
-    .translate([width / 1.7, height / 1.7]);
+    .scale(5000 * scale)
+    .center([-111.0937, 39.3200]);
 
   const path = d3.geoPath().projection(projection);
 
-  const svg = d3.select("#utah-map-svg");
+  const svg = d3.select("#utah-map-svg")
+    .attr("width", width)
+    .attr("height", height);
   const geoJsonGroup = svg.append("g")
 
   // Load and plot filtered GeoJSON data
@@ -151,8 +152,17 @@ function main() {
     };
 
     console.log("Filtered GeoJSON Data:", filteredData);
-
+    
     plotGeoJson(filteredData, geoJsonGroup, path);
+    // Calculate bounds of the content
+    const bounds = geoJsonGroup.node().getBBox();
+
+    svg.attr("width", bounds.width + (50 * scale))
+    .attr("height", bounds.height + (50* scale))
+    .attr("viewBox", `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
+
+    // geoJsonGroup.attr("transform", `translate(${bounds.width/(5*scale)}, ${bounds.height/(1.5*scale)})`)
+
   }).catch(function(error) {
     console.error("Error loading the GeoJSON data:", error);
   });

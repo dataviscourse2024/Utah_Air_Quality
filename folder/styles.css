@@ -115,7 +115,7 @@
 
     #side-modal-container {
       position: fixed;
-      top: 50%; /* Start off-screen */
+      top: 40%; /* Start off-screen */
       right: 0px;
       display: flex;
       align-items: center;
