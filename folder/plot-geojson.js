@@ -166,22 +166,8 @@ function main() {
   }).catch(function(error) {
     console.error("Error loading the GeoJSON data:", error);
   });
-  
   // SET DEFAULTS
-  console.log("VALUE", d3.select(".dropdown-menu").property("value"));
-  const year = d3.select(".dropdown-menu").property("value")
-  d3.select("#selected-year").text(year);
-
-  const filePath = `data/${year}.csv`;
-
-  globalState.data = filePath;
-  globalState.year = year;
-  globalState.medalPlot = "pieChart";
-
-  convertCsvToGeoJson(filePath, function(geojson) {
-    console.log("Check after selecting year, call this plot function");
-    plotPoints(geojson, geoJsonGroup, projection);
-  });
+  d3.select("#selected-year").text("Please select a year");
 
   // On selection change
 
