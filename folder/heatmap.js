@@ -18,7 +18,7 @@ export function heatMapSetup(globalState, stationName) {
     updateHeatMap(tempGeoJson, "tempStationName", globalState.selectedSeason, globalState.selectedYear)
 }
 
-function updateHeatMap(geojson, stationName, season) {
+function updateHeatMap(geojson, stationName, season, year) {
     let inputData = geojson[stationName]
     const numColumns = 7; // Days in a week for a calendar layout
     const numRows = 6; // Maximum rows for a month
@@ -34,8 +34,8 @@ function updateHeatMap(geojson, stationName, season) {
     const totalHeight = squareSize * (numRows-1) + spacing * (numRows - 1) + labelHeight;
 
 
-    const monthsList = getSeasonDays("winter")
-    console.log(monthsList.length, monthsList[0][2])
+    const monthsList = getSeasonDays(season, year);
+    console.log(monthsList.length, monthsList[0][2]);
 
 
     const svg = d3.select("#tooltip-chart-svg")
@@ -44,7 +44,8 @@ function updateHeatMap(geojson, stationName, season) {
     .domain(["Good", "Fair", "Poor", null])
     .range(["#33ff7d", "#ffea33", "#ff5733", "#d3d3d3"]);
 
-    svg.select("g").remove();
+    console.log("REMOVINGGG");
+    svg.selectAll("g").remove();
     for(let month = 0; month < monthsList.length; month++) {
         console.log("here ", month);
         const fullData = Array.from({ length: monthsList[month][2] }, (_, i) => {
@@ -55,7 +56,7 @@ function updateHeatMap(geojson, stationName, season) {
           console.log("FULL DATA", fullData)
 
         const chart = svg.append("g")
-        .attr("class", "heatmap" + String(month+1))
+        .attr("class", "heatmap")
         .attr("transform", `translate(${MARGIN.left},${MARGIN.top})`);
         
         chart.append("text")
@@ -83,31 +84,32 @@ function updateHeatMap(geojson, stationName, season) {
 
 function getSeasonDays(season, year) {
     let days_amnt = []
-    if (season == "winter") {
-        days_amnt.push(["12", "December", getMonthDays("Dec")])
-        days_amnt.push(["01", "January", getMonthDays("Jan")])
-        days_amnt.push(["02", "February", getMonthDays("Feb")])
+    if (season == "Winter") {
+        days_amnt.push(["12", "December", getDaysInMonth("December", year)])
+        days_amnt.push(["01", "January", getDaysInMonth("January", year)])
+        days_amnt.push(["02", "February", getDaysInMonth("February", year)])
     }
-    else if(season == "spring") {
-
+    else if(season == "Spring") {
+        days_amnt.push(["03", "March", getDaysInMonth("March", year)])
+        days_amnt.push(["04", "April", getDaysInMonth("April", year)])
+        days_amnt.push(["05", "May", getDaysInMonth("May", year)])
     }
-    else if(season == "summer") {
-
+    else if(season == "Summer") {
+        days_amnt.push(["06", "June", getDaysInMonth("June", year)])
+        days_amnt.push(["07", "July", getDaysInMonth("July", year)])
+        days_amnt.push(["08", "August", getDaysInMonth("August", year)])
     }
-    else if (season == "fall") {
-
+    else if (season == "Fall") {
+        days_amnt.push(["09", "September", getDaysInMonth("September", year)])
+        days_amnt.push(["10", "October", getDaysInMonth("October", year)])
+        days_amnt.push(["11", "November", getDaysInMonth("November", year)])
     }
+    console.log("DAYS FOR season: ", season, ", year: ", year, "  ", days_amnt);
     return days_amnt
 }
 
-function getMonthDays(month) {
-    if(month == "Dec") {
-        return 31
-    }
-    else if (month == "Jan") {
-        return 31
-    }
-    else if (month == "Feb") {
-        return 28
-    }
+function getDaysInMonth(monthName, year) {
+    const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth(); // Convert month name to index
+    const nextMonth = new Date(year, monthIndex + 1, 0); // Set to the last day of the month
+    return nextMonth.getDate(); // Get the day of the last day (total days)
 }
