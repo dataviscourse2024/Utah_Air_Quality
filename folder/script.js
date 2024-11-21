@@ -93,6 +93,8 @@ function updateBySeason(season, geojson) {
 });
 
 function groupbyMonth(data) {
+  const parseDate = d3.timeParse("%m/%d/%Y");
+
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   const monthlyData = months.map(month => {

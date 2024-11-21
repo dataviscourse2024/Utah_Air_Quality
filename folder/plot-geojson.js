@@ -111,14 +111,21 @@ function plotPoints(geojson, geoJsonGroup, projection) {
 }
 
 
-function updateCircleSizes(month, geojson, geoJsonGroup, projection) {
-  const filePath = globalState.data;
+function updateCircleSizes(month, geojson, geoJsonGroup) {
+  const monthIndex = parseInt(month);
+  geoJsonGroup.selectAll("circle")
+    .data(geojson.features)
+    .transition()
+    .duration(1000)
+    .attr("r", d => {
+      const monthlyData = d.properties.monthlyData;
+      const avgPM25Month = monthlyData[monthIndex].avgPM25Month;
+      return avgPM25Month;
+    });
+}
+ 
 
-  console.log("File Path:", filePath); // Debugging log
-
-  console.log("Global State:", globalState);
-
-  upda
+  
 
   
   // convertCsvToGeoJson(filePath, function(geojson) {
@@ -132,7 +139,7 @@ function updateCircleSizes(month, geojson, geoJsonGroup, projection) {
   //     .duration(1000)
   //     .attr("r", d => sizeScale(d.properties.avgPM25));
   // });
-}
+
 
 // Main function to load and plot data
 function main() {
@@ -210,18 +217,21 @@ function main() {
   });
 
 
-  d3.slect("#customRange3").on("change", function(event) {
+  d3.select("#customRange3").on("change", function(event) {
     const month = this.value;
     console.log("Month selected:", month); // Debugging log
-
-    filePath = globalState.data;
+    console.log("Global State:", globalState);
+    const filePath = globalState.data;
+    console.log("File Path:", filePath); // Debugging log
 
     convertCsvToGeoJsonForAnimation(filePath, function(geojson) {
-      // updateCircleSizes(month, geoJsonGroup);
+      updateCircleSizes(month, geojson, geoJsonGroup);
       console.log("Check after selecting month, call this plot function");
     });
     // Load the GeoJSON data and update the modal content based on the selected year
   });
+
+
 
 
 
