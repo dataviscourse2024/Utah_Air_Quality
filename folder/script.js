@@ -92,6 +92,23 @@ function updateBySeason(season, geojson) {
   });
 });
 
+function groupbyMonth(data) {
+  const parseDate = d3.timeParse("%m/%d/%Y");
+
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  const monthlyData = months.map(month => {
+    const monthData = data.filter(d => {
+      const date = parseDate(d["Date"]);
+      return date.getMonth() === months.indexOf(month);
+    });
+    const avgPM25 = d3.mean(monthData, d => +d["Daily Mean PM2.5 Concentration"]);
+    return { month: month, avgPM25Month: avgPM25 };
+  });
+
+  return monthlyData;
+}
+
 
 export function convertCsvToGeoJsonForPieChart(tempFilePath, callback) {
 
@@ -127,6 +144,48 @@ export function convertCsvToGeoJsonForPieChart(tempFilePath, callback) {
   }).catch(function(error) {
     console.error("Error loading or parsing data:", error);
   });
+}
+
+export function convertCsvToGeoJsonForAnimation(tempFilePath, callback) {
+  console.log("Loading data from file:", tempFilePath);
+  // Load the CSV data
+
+  d3.csv(tempFilePath).then(function(data) {
+    const locations = d3.group(data, d => d["Local Site Name"]);
+    const geojsonFeatures = [];
+
+    locations.forEach((values, key) => {
+      const monthlyData = groupbyMonth(values);
+      const latitude = +values[0]["Site Latitude"];
+      const longitude = +values[0]["Site Longitude"];
+
+      geojsonFeatures.push({
+        type: "Feature",
+        properties: {
+          name: key,
+          monthlyData: monthlyData
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [longitude, latitude]
+        }
+      });   
+    });
+
+    const geojson = {
+      type: "FeatureCollection",
+      features: geojsonFeatures
+    };
+
+    console.log("GeoJSON Data:", geojson);
+
+    // Call the callback function with the generated GeoJSON data
+    callback(geojson);
+    
+  }).catch(function(error) {
+    console.error("Error loading or parsing data:", error);
+  });
+  
 }
 
 // Function to convert CSV data to GeoJSON

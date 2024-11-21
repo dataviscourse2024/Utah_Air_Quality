@@ -2,6 +2,7 @@ import * as d3 from 'https://cdn.skypack.dev/d3@7';
 import { convertCsvToGeoJson } from './script.js';
 import { globalState } from './config.js';
 import { setup } from './piechart.js';
+import { convertCsvToGeoJsonForAnimation } from './script.js';
 
 // Color combination
 const colors = {
@@ -12,6 +13,8 @@ const colors = {
   circleFill: "#293742",
   circleHover: "#d2e0f5"
 };
+
+
 
 // Function to plot GeoJSON data on the map
 function plotGeoJson(geojson, geoJsonGroup, path) {
@@ -108,21 +111,35 @@ function plotPoints(geojson, geoJsonGroup, projection) {
 }
 
 
-function updateCircleSizes(year, geoJsonGroup, projection) {
-  const filePath = `data/${year}.csv`;
-  console.log("File Path:", filePath); // Debugging log
-  convertCsvToGeoJson(filePath, function(geojson) {
-    const sizeScale = d3.scaleLinear()
-      .domain(d3.extent(geojson.features, d => d.properties.avgPM25))
-      .range([2, 15]);
-
-    geoJsonGroup.selectAll("circle")
-      .data(geojson.features)
-      .transition()
-      .duration(1000)
-      .attr("r", d => sizeScale(d.properties.avgPM25));
-  });
+function updateCircleSizes(month, geojson, geoJsonGroup) {
+  const monthIndex = parseInt(month);
+  geoJsonGroup.selectAll("circle")
+    .data(geojson.features)
+    .transition()
+    .duration(1000)
+    .attr("r", d => {
+      const monthlyData = d.properties.monthlyData;
+      const avgPM25Month = monthlyData[monthIndex].avgPM25Month;
+      return avgPM25Month;
+    });
 }
+ 
+
+  
+
+  
+  // convertCsvToGeoJson(filePath, function(geojson) {
+  //   const sizeScale = d3.scaleLinear()
+  //     .domain(d3.extent(geojson.features, d => d.properties.avgPM25))
+  //     .range([2, 15]);
+
+  //   geoJsonGroup.selectAll("circle")
+  //     .data(geojson.features)
+  //     .transition()
+  //     .duration(1000)
+  //     .attr("r", d => sizeScale(d.properties.avgPM25));
+  // });
+
 
 // Main function to load and plot data
 function main() {
@@ -182,7 +199,7 @@ function main() {
     const filePath = `data/${year}.csv`;
 
     globalState.data = filePath;
-    globalState.year = year;
+    globalState.selectedYear = year;
     globalState.medalPlot = "pieChart";
 
     console.log("File Path:", filePath); // Debugging log
@@ -199,6 +216,27 @@ function main() {
 
   });
 
+
+  d3.select("#customRange3").on("change", function(event) {
+    const month = this.value;
+    console.log("Month selected:", month); // Debugging log
+    console.log("Global State:", globalState);
+    const filePath = globalState.data;
+    console.log("File Path:", filePath); // Debugging log
+
+    convertCsvToGeoJsonForAnimation(filePath, function(geojson) {
+      updateCircleSizes(month, geojson, geoJsonGroup);
+      console.log("Check after selecting month, call this plot function");
+    });
+    // Load the GeoJSON data and update the modal content based on the selected year
+  });
+
+
+
+
+
+
+    
   
 
 
@@ -260,7 +298,7 @@ let isModalOpen = true;
 // Toggle function to open and close the modal
 function toggleModal() {
     const sideModalContainer = d3.select("#side-modal-container");
-    const buttonContainer = d3.select("#button-container")
+    const buttonContainer = d3.select("#button-container");
     const arrowIcon = d3.select("#arrow-icon");
 
     if (isModalOpen) {
