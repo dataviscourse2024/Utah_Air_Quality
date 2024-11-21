@@ -71,9 +71,10 @@ function plotPoints(geojson, geoJsonGroup, projection) {
         // .attr("fill", "000000")
         // .attr("r", 2);  // Increase radius on hover
         .attr("r", pointRadius * 2)
-
-        tooltip.style("display", "block")
+        console.log('MOUSE OVER');
+          tooltip.style("display", "block")
         tooltipLabel.text(d.properties.name);
+        
         tooltipText.text(`Avg PM2.5: ${d.properties.avgPM25.toFixed(2)}`)
         console.log("TOOLTIPTYPE", globalState.tooltipChartType);
         pieChartSetup(globalState, d.properties.name);
@@ -95,7 +96,7 @@ function plotPoints(geojson, geoJsonGroup, projection) {
       const modalHeight = modal.offsetHeight;
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-
+      console.log('MOUSE MOVE');
       // Adjust x position if the modal goes off the right edge
       if (x + modalWidth > viewportWidth) {
           x = event.pageX - modalWidth - offsetX;
@@ -103,11 +104,11 @@ function plotPoints(geojson, geoJsonGroup, projection) {
 
       // Adjust y position if the modal goes off the bottom edge
       if (y + modalHeight > viewportHeight) {
-        y = event.pagey - modalHeight - offsetY;
+        y = event.pageY - modalHeight - offsetY;
       }
 
       tooltip.style("left", x + "px")
-        .style("top", y + "px");
+            .style("top", y + "px");
       
     });
 }

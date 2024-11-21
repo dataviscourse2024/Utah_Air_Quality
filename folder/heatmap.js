@@ -1,6 +1,6 @@
 const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
 const CHART_WIDTH = 275;
-const CHART_HEIGHT = 400;
+const CHART_HEIGHT = 300;
 
 export function heatMapSetup(globalState, stationName) {
     console.log("Creating Heatmap");
@@ -21,17 +21,12 @@ export function heatMapSetup(globalState, stationName) {
 function updateHeatMap(geojson, stationName, season, year) {
     let inputData = geojson[stationName]
     const numColumns = 7; // Days in a week for a calendar layout
-    const numRows = 6; // Maximum rows for a month
+    const numRows = 5; // Maximum rows for a month
     const spacing = 5; // Space between squares (in pixels)
     const labelHeight = 20
+    const squareSize = 12
 
-    // Height allocated per grid
-    const gridHeight = (CHART_HEIGHT / 3) - labelHeight;
-
-    // Calculate square size dynamically
-    const squareSize = Math.floor(gridHeight / numRows);
-
-    const totalHeight = squareSize * (numRows-1) + spacing * (numRows - 1) + labelHeight;
+    const oneGridHeight = squareSize * (numRows) + spacing * (numRows - 1) + labelHeight;
 
 
     const monthsList = getSeasonDays(season, year);
@@ -62,7 +57,7 @@ function updateHeatMap(geojson, stationName, season, year) {
         chart.append("text")
         .attr("class", "month-label")
         .attr("x", 0)
-        .attr("y", (month * totalHeight) - 5)
+        .attr("y", (month * oneGridHeight) - 5)
         .text(monthsList[month][1])
 
         // Draw the squares dynamically
@@ -74,7 +69,7 @@ function updateHeatMap(geojson, stationName, season, year) {
         .attr("width", squareSize)
         .attr("height", squareSize)
         .attr("x", (d) => ((d.day - 1) % numColumns) * (squareSize + spacing))
-        .attr("y", (d) => (Math.floor((d.day - 1) / numColumns) * (squareSize + spacing)) + (month * totalHeight))
+        .attr("y", (d) => (Math.floor((d.day - 1) / numColumns) * (squareSize + spacing)) + (month * oneGridHeight))
         .attr("fill", (d) => colorScale(d.category))
         .attr("stroke", "#ccc");
     }
