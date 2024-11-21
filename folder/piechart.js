@@ -8,7 +8,7 @@ const CHART_HEIGHT = 300 - MARGIN.top - MARGIN.bottom;
 
 
 
-export function setup(globalState, stationName) {
+export function pieChartSetup(globalState, stationName) {
     console.log("SETTING UP PIE CHART")
     const svg = d3.select("#tooltip-chart-svg")
     .attr("width", CHART_WIDTH + MARGIN.left + MARGIN.right)
@@ -109,4 +109,10 @@ export function updatePieChart(geojson, stationName) {
         .text(d => `${d.category.charAt(0).toUpperCase() + d.category.slice(1)}`)
         .style("font-size", "12px")
         .style("fill", "black");
+}
+
+export function deletePieChart(){
+    const svg = d3.select("#tooltip-chart-svg")
+
+    svg.select("g").remove();
 }

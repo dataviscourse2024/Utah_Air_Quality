@@ -1,7 +1,7 @@
 import * as d3 from 'https://cdn.skypack.dev/d3@7';
 import { convertCsvToGeoJson } from './script.js';
 import { globalState } from './config.js';
-import { setup } from './piechart.js';
+import { pieChartSetup } from './piechart.js';
 import { convertCsvToGeoJsonForAnimation } from './script.js';
 
 // Color combination
@@ -75,7 +75,9 @@ function plotPoints(geojson, geoJsonGroup, projection) {
         tooltip.style("display", "block")
         tooltipLabel.text(d.properties.name);
         tooltipText.text(`Avg PM2.5: ${d.properties.avgPM25.toFixed(2)}`)
-        setup(globalState, d.properties.name);
+        console.log("TOOLTIPTYPE", globalState.tooltipChartType);
+        pieChartSetup(globalState, d.properties.name);
+
     })
     .on("mouseout", function(event, d) {
       d3.select(this)
@@ -200,7 +202,7 @@ function main() {
 
     globalState.data = filePath;
     globalState.selectedYear = year;
-    globalState.medalPlot = "pieChart";
+    globalState.tooltipChartType = "pieChart";
 
     console.log("File Path:", filePath); // Debugging log
 

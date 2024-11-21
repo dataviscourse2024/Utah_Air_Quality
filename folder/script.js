@@ -1,6 +1,8 @@
 // Import D3.js
 import * as d3 from 'https://cdn.skypack.dev/d3@7';
 import { globalState } from './config.js';
+import { heatMapSetup } from './heatmap.js';
+import { deletePieChart } from './piechart.js';
 
 // Function to group data by season
 function groupbySeason(data) {
@@ -68,6 +70,8 @@ function updateBySeason(season, geojson) {
       d3.select("#tooltip-text-label").text(d.properties.name);
       d3.select("#tooltip-text-value").text(`Average PM2.5 for ${season}: ${avgPM25Seasonal.toFixed(2)}`);
       d3.select("#tooltip").style("display", "block");
+      deletePieChart();
+      heatMapSetup(globalState, d.properties.name);
     }).on("mouseout", function(event) {
       d3.select(this)
         .attr("fill", colorScale(d.properties.seasonalData.find(s => s.season === season).avgPM25Seasonal))
@@ -85,6 +89,8 @@ function updateBySeason(season, geojson) {
  d3.selectAll(".btn-group .btn").on("click", function(event) {
   console.log("Button clicked:", d3.select(this).attr("id"));
   const season = d3.select(this).attr("id");
+  globalState.selectedSeason = season;
+  globalState.tooltipChartType = "heatMap";
   // Load the GeoJSON data and update the modal content
   convertCsvToGeoJson(globalState.data, function(geojson) {
     console.log("GeoJSON Data:", globalState.data);
