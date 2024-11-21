@@ -1,11 +1,11 @@
 const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
-const CHART_WIDTH = 325 - MARGIN.left - MARGIN.right;
+const CHART_WIDTH = 275;
 const CHART_HEIGHT = 400;
 
 export function heatMapSetup(globalState, stationName) {
     console.log("Creating Heatmap");
     const svg = d3.select("#tooltip-chart-svg")
-    .attr("width", CHART_WIDTH + MARGIN.left + MARGIN.right)
+    .attr("width", CHART_WIDTH)
     .attr("height", CHART_HEIGHT);
 
     let tempGeoJson = {"tempStationName": [
