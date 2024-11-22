@@ -81,7 +81,7 @@ export function plotPoints(geojson, geoJsonGroup) {
           tooltip.style("display", "block")
         tooltipLabel.text(d.properties.name);
         
-        tooltipText.text(`Avg PM2.5: ${d.properties.avgPM25.toFixed(2)}`)
+        tooltipText.text(`Avg PM2.5 for ${globalState.selectedYear}: ${d.properties.avgPM25.toFixed(2)}`)
         console.log("TOOLTIPTYPE", globalState.tooltipChartType);
         pieChartSetup(globalState, d.properties.name);
 

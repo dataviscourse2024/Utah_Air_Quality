@@ -184,6 +184,11 @@
       flex-direction: column;
       position: relative;
       width: 30px;
+      cursor: pointer;
+    }
+
+    .dropdown-item {
+      cursor: pointer;
     }
 
     .button {
@@ -228,6 +233,7 @@
       width: 20px;
       margin-right: 10px;
       filter: invert(100%) brightness(200%);
+      cursor: pointer;
     }
 
     .select-button {
