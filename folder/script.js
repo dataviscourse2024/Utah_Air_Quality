@@ -266,5 +266,3 @@ export function convertCsvToGeoJson(tempFilePath, callback) {
     console.error("Error loading or parsing data:", error);
   });
 }
-
-
