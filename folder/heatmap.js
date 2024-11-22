@@ -8,17 +8,14 @@ export function heatMapSetup(globalState, stationName) {
     .attr("width", CHART_WIDTH)
     .attr("height", CHART_HEIGHT);
 
-    let tempGeoJson = {"tempStationName": [
-        { day: 1, category: "Good" },
-        { day: 2, category: "Fair" },
-        { day: 5, category: "Poor" },
-        // Missing days 3, 4, etc.
-      ]}
+    let tempGeoJson = makeFakeData(globalState.selectedSeason, globalState.selectedYear);
+    console.log("FAKE DATA", tempGeoJson);
 
     updateHeatMap(tempGeoJson, "tempStationName", globalState.selectedSeason, globalState.selectedYear)
 }
 
 function updateHeatMap(geojson, stationName, season, year) {
+
     let inputData = geojson[stationName]
     const numColumns = 7; // Days in a week for a calendar layout
     const numRows = 5; // Maximum rows for a month
@@ -44,7 +41,7 @@ function updateHeatMap(geojson, stationName, season, year) {
     for(let month = 0; month < monthsList.length; month++) {
         console.log("here ", month);
         const fullData = Array.from({ length: monthsList[month][2] }, (_, i) => {
-            const day = i + 1;
+            const day = `${monthsList[month][1]}${i+1}`;
             const existingDay = inputData.find((d) => d.day === day);
             return existingDay || { day, category: null };
           });
@@ -68,8 +65,8 @@ function updateHeatMap(geojson, stationName, season, year) {
         .attr("class", "day")
         .attr("width", squareSize)
         .attr("height", squareSize)
-        .attr("x", (d) => ((d.day - 1) % numColumns) * (squareSize + spacing))
-        .attr("y", (d) => (Math.floor((d.day - 1) / numColumns) * (squareSize + spacing)) + (month * oneGridHeight))
+        .attr("x", (d, i) => (i % numColumns) * (squareSize + spacing))
+        .attr("y", (d, i) => (Math.floor(i / numColumns) * (squareSize + spacing)) + (month * oneGridHeight))
         .attr("fill", (d) => colorScale(d.category))
         .attr("stroke", "#ccc");
     }
@@ -107,4 +104,25 @@ function getDaysInMonth(monthName, year) {
     const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth(); // Convert month name to index
     const nextMonth = new Date(year, monthIndex + 1, 0); // Set to the last day of the month
     return nextMonth.getDate(); // Get the day of the last day (total days)
+}
+
+function makeFakeData(season, year) {
+    // let tempGeoJson = {"tempStationName": [
+    //     { day: 1, category: "Good" },
+    //     { day: 2, category: "Fair" },
+    //     { day: 5, category: "Poor" },
+    //     // Missing days 3, 4, etc.
+    //   ]}
+
+    let tempGeoJson = {"tempStationName": []}
+
+    let categories = ["Good", "Fair", "Poor"]
+    const monthsList = getSeasonDays(season, year);
+    for(let month = 0; month < monthsList.length; month++) {
+        for(let i = 0; i < monthsList[month][2]; i++) {
+            tempGeoJson["tempStationName"].push({day:`${monthsList[month][1]}${i+1}`, category:categories[Math.floor(Math.random() * 3)]})
+        }
+    }
+
+    return tempGeoJson
 }
