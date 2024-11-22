@@ -14,6 +14,12 @@ const colors = {
   circleHover: "#d2e0f5"
 };
 
+const targetSize = .75 * window.innerHeight;
+const scale = targetSize/616;
+const projection = d3.geoMercator()
+.scale(5000 * scale)
+.center([-111.0937, 39.3200]);
+
 
 
 // Function to plot GeoJSON data on the map
@@ -32,7 +38,7 @@ function plotGeoJson(geojson, geoJsonGroup, path) {
 
 
 // Function to plot points from GeoJSON data
-function plotPoints(geojson, geoJsonGroup, projection) {
+export function plotPoints(geojson, geoJsonGroup) {
   console.log("Plotting Points Data:", geojson);
   console.log("Projection:", projection);
   console.log("GeoJSON Group:", geoJsonGroup);
@@ -148,12 +154,6 @@ function updateCircleSizes(month, geojson, geoJsonGroup) {
 function main() {
   const width = 600;
   const height = 800;
-  const targetSize = .75 * window.innerHeight;
-  const scale = targetSize/616;
-
-  const projection = d3.geoMercator()
-    .scale(5000 * scale)
-    .center([-111.0937, 39.3200]);
 
   const path = d3.geoPath().projection(projection);
 
@@ -195,8 +195,8 @@ function main() {
     const year = this.value;
     console.log("Year selected:", year); // Debugging log
     // Load the GeoJSON data and update the modal content based on the selected year
-
-    d3.select("#selected-year").text(year);
+    d3.selectAll(".btn-group .btn").classed("season-unselected", true);
+    d3.select("#selected-year").text(`Average over: ${year}`);
 
 
     const filePath = `data/${year}.csv`;
@@ -209,12 +209,9 @@ function main() {
 
     console.log("Global State:", globalState);
 
-
-    
-
     convertCsvToGeoJson(filePath, function(geojson) {
       console.log("Check after selecting year, call this plot function");
-      plotPoints(geojson, geoJsonGroup, projection);
+      plotPoints(geojson, geoJsonGroup);
     });
 
   });
@@ -234,98 +231,43 @@ function main() {
     // Load the GeoJSON data and update the modal content based on the selected year
   });
 
+  const sideButton = d3.select("#arrow-icon");
+  sideButton.on("click", toggleModal);
 
-
-
-
-
-    
+  const playButton = d3.select("#animation-icon");
+  playButton.on("click", handleAnimation);
   
-
-
-  
-  // Convert CSV to GeoJSON and plot the data
-  // convertCsvToGeoJson("data/test.csv", function(geojson) {
-  //   plotPoints(geojson, geoJsonGroup, projection);
-  // });
-  // Set optional offsets if you want to adjust the modal's position slightly from the cursor
-  const xOffset = 10; // Horizontal offset for the modal
-  const yOffset = 10; // Vertical offset for the modal
-
-  // Select the target div and bind the hover events
-  // d3.select("#utah-map-svg")
-  //   .on("mouseover", function (event) {
-  //       // Show the modal on hover
-  //       d3.select("#chart-modal").style("display", "block");
-  //   })
-  //   .on("mousemove", function (event) {
-  //       // Get the viewport dimensions
-  //       const viewportWidth = window.innerWidth;
-  //       const viewportHeight = window.innerHeight;
-
-  //       // Calculate initial modal position based on mouse coordinates
-  //       let x = event.pageX + xOffset;
-  //       let y = event.pageY + yOffset;
-
-  //       // Get the modal element's dimensions
-  //       const modal = d3.select("#chart-modal").node();
-  //       const modalWidth = modal.offsetWidth;
-  //       const modalHeight = modal.offsetHeight;
-
-  //       // Adjust x position if the modal goes off the right edge
-  //       if (x + modalWidth > viewportWidth) {
-  //           x = viewportWidth - modalWidth - xOffset;
-  //       }
-
-  //       // Adjust y position if the modal goes off the bottom edge
-  //       if (y + modalHeight > viewportHeight) {
-  //           y = viewportHeight - modalHeight - yOffset;
-  //       }
-
-  //       // Apply the adjusted position to the modal
-  //       d3.select("#chart-modal")
-  //           .style("left", x + "px")
-  //           .style("top", y + "px");
-  //   })
-  //   .on("mouseout", function () {
-  //       // Hide the modal when the mouse leaves the div
-  //       d3.select("#chart-modal").style("display", "none");
-  //   });
-
-    const sideButton = d3.select("#arrow-icon");
-
-    sideButton.on("click", toggleModal);
 }
 
 let isModalOpen = true;
 // Toggle function to open and close the modal
 function toggleModal() {
-    const sideModalContainer = d3.select("#side-modal-container");
-    const buttonContainer = d3.select("#button-container");
-    const arrowIcon = d3.select("#arrow-icon");
+  const sideModalContainer = d3.select("#side-modal-container");
+  const buttonContainer = d3.select("#button-container");
+  const arrowIcon = d3.select("#arrow-icon");
 
-    if (isModalOpen) {
-        // Close the modal
-        sideModalContainer.style("right", "-270px"); // Slide container off-screen
-        arrowIcon.style("transform", "scaleX(1)"); // Flip arrow to point right
-        buttonContainer.style("margin-right", "100px"); 
-    } else {
-        // Open the modal
-        sideModalContainer.style("right", "0"); // Slide container into view
-        arrowIcon.style("transform", "scaleX(-1)"); // Flip arrow to point left
-        buttonContainer.style("margin-right", "20px");
-    }
+  if (isModalOpen) {
+      // Close the modal
+      sideModalContainer.style("right", "-270px"); // Slide container off-screen
+      arrowIcon.style("transform", "scaleX(1)"); // Flip arrow to point right
+      buttonContainer.style("margin-right", "100px"); 
+  } else {
+      // Open the modal
+      sideModalContainer.style("right", "0"); // Slide container into view
+      arrowIcon.style("transform", "scaleX(-1)"); // Flip arrow to point left
+      buttonContainer.style("margin-right", "20px");
+  }
 
-    // Toggle the state
-    isModalOpen = !isModalOpen;
-
-    
+  // Toggle the state
+  isModalOpen = !isModalOpen;
 }
 
-// d3.select("#Spring").dispatch("click");
-
-
-
+function handleAnimation() {
+  const playButton = d3.select("#animation-icon")
+  let currSrc = playButton.attr("src");
+  const newSrc = currSrc === "/folder/icons/PlayIcon.png" ? "/folder/icons/stopSquareIcon.webp" : "/folder/icons/PlayIcon.png";
+  playButton.attr("src", newSrc)
+}
 
 // Run the main function
 main();

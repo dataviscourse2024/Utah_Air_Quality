@@ -3,6 +3,7 @@ import * as d3 from 'https://cdn.skypack.dev/d3@7';
 import { globalState } from './config.js';
 import { heatMapSetup } from './heatmap.js';
 import { deletePieChart } from './piechart.js';
+import { plotPoints } from './plot-geojson.js';
 
 // Function to group data by season
 function groupbySeason(data) {
@@ -48,7 +49,7 @@ function updateBySeason(season, geojson) {
 
   const sizeScale = d3.scaleLinear()
     .domain(d3.extent(geojson.features, d => d.properties.avgPM25))
-    .range([2, 15]);
+    .range([2, 10]);
 
   // Update the circle colors based on the selected season
   d3.selectAll("circle").data(geojson.features)
@@ -56,7 +57,8 @@ function updateBySeason(season, geojson) {
       const seasonalData = d.properties.seasonalData.find(s => s.season === season);
       return seasonalData ? colorScale(seasonalData.avgPM25Seasonal) : colorScale(d.properties.avgPM25);
     })
-    .attr("r", d => sizeScale(d.properties.avgPM25));
+    .attr("r", d => sizeScale(d.properties.seasonalData.find(s => s.season === season).avgPM25Seasonal))
+    .style("opacity", 0.7);
 
   // Update the tooltip text
   d3.selectAll("circle").each(function(d) {
@@ -64,8 +66,9 @@ function updateBySeason(season, geojson) {
     const avgPM25Seasonal = seasonalData ? seasonalData.avgPM25Seasonal : 0;
     d3.select(this).on("mouseover", function(event) {
       d3.select(this)
-        .attr("fill", "#293742")
-        .attr("r", sizeScale(d.properties.avgPM25) * 1.5); // Increase radius on hover
+        .attr("stroke", "#ffff")
+        .attr("stroke-width", 1)
+        .attr("r", sizeScale(avgPM25Seasonal) * 1.5); // Increase radius on hover
 
       d3.select("#tooltip-text-label").text(d.properties.name);
       d3.select("#tooltip-text-value").text(`Average PM2.5 for ${season}: ${avgPM25Seasonal.toFixed(2)}`);
@@ -74,8 +77,9 @@ function updateBySeason(season, geojson) {
       heatMapSetup(globalState, d.properties.name);
     }).on("mouseout", function(event) {
       d3.select(this)
-        .attr("fill", colorScale(d.properties.seasonalData.find(s => s.season === season).avgPM25Seasonal))
-        .attr("r", sizeScale(d.properties.avgPM25)); // Reset radius on mouseout
+        .attr("fill", colorScale(avgPM25Seasonal))
+        .attr("r", sizeScale(avgPM25Seasonal)) // Reset radius on mouseout
+        .attr("stroke-width", 0);
 
       d3.select("#tooltip").style("display", "none");
     });
@@ -85,10 +89,33 @@ function updateBySeason(season, geojson) {
 }
 
 
-
+  d3.selectAll(".btn-group .btn").classed("season-unselected", true);
  d3.selectAll(".btn-group .btn").on("click", function(event) {
+  const buttonClicked = d3.select(this);
+  if(!buttonClicked.classed("season-unselected")) {
+    d3.selectAll(".btn-group .btn").classed("season-unselected", true);
+    console.log("BUTTON CLICKED HAS NO UNSELECT")
+    const filePath = globalState.data;
+    const geoJsonGroup = d3.select("#utah-map-svg").select("g");
+    convertCsvToGeoJson(filePath, function(geojson) {
+      console.log("CALLING UNSELECT FUNCTION");
+      plotPoints(geojson, geoJsonGroup);
+    });
+    if(globalState.selectedYear) {
+      d3.select("#selected-year").text(`Average over: ${globalState.selectedYear}`);
+    }
+
+    return
+  }
+
+  d3.selectAll(".btn-group .btn").classed("season-unselected", true); // Remove "selected" class from all buttons
+  buttonClicked.classed("season-unselected", false); // Add "selected" class to the clicked button
+
   console.log("Button clicked:", d3.select(this).attr("id"));
-  const season = d3.select(this).attr("id");
+  const season = buttonClicked.attr("id");
+  if(globalState.selectedYear) {
+    d3.select("#selected-year").text(`Average over: ${season} ${globalState.selectedYear}`);
+  }
   globalState.selectedSeason = season;
   globalState.tooltipChartType = "heatMap";
   // Load the GeoJSON data and update the modal content
