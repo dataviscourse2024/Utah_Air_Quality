@@ -5,6 +5,8 @@ import { heatMapSetup } from './heatmap.js';
 import { deletePieChart } from './piechart.js';
 import { plotPoints } from './plot-geojson.js';
 
+
+
 // Function to group data by season
 function groupbySeason(data) {
   const seasons = ["Winter", "Spring", "Summer", "Fall"];
@@ -89,7 +91,8 @@ function updateBySeason(season, geojson) {
 }
 
 
-  d3.selectAll(".btn-group .btn").classed("season-unselected", true);
+d3.selectAll(".btn-group .btn").classed("season-unselected", true);
+
  d3.selectAll(".btn-group .btn").on("click", function(event) {
   const buttonClicked = d3.select(this);
   if(!buttonClicked.classed("season-unselected")) {
@@ -142,27 +145,160 @@ function groupbyMonth(data) {
   return monthlyData;
 }
 
+const methods = [
+  "IMPROVE Module A with Cyclone Inlet-Teflon Filter, 2.2 sq. cm",
+  "R & P Model 2025 PM-2.5 Sequential Air Sampler w/VSCC",
+  "Teledyne T640 at 5.0 LPM",
+  "Thermo Scientific Model 5030 SHARP w/VSCC"
+];
+
+// function groupForEachMonth(){
+
+//   datePrase
+
+
+
+// }
+
+
+
+function filterDataByMethods(data, methods) {
+  // Group data by Local Site Name
+  const groupedData = d3.group(data, d => d["Local Site Name"]);
+
+  const filteredData = [];
+
+  groupedData.forEach((values, key) => {
+    // Group by date within each site
+    const dateGrouped = d3.group(values, d => d["Date"]);
+
+    const siteFilteredData = [];
+
+    // Select one method per date
+    dateGrouped.forEach((dateValues, date) => {
+      const selectedMethod = dateValues.find(d => methods.includes(d["Method Description"]));
+      if (selectedMethod) {
+        siteFilteredData.push(selectedMethod);
+      }
+    });
+
+    // Ensure the number of unique dates is capped at 356
+    if (siteFilteredData.length > 356) {
+      siteFilteredData.sort((a, b) => new Date(a["Date"]) - new Date(b["Date"]));
+      filteredData.push(...siteFilteredData.slice(0, 356));
+    } else {
+      filteredData.push(...siteFilteredData);
+    }
+  });
+
+  console.log("Filtered Data:", filteredData);
+
+  return filteredData;
+}
+
+
+export function convertCsvToGeoJsonForHeatMap(tempFilePath, callback) {
+  console.log("Loading data from file:", tempFilePath);
+  d3.csv(tempFilePath).then(function(data) {
+    // Parse the data and calculate the average PM2.5 concentration for each location
+    const firsthandData = filterDataByMethods(data, methods);
+
+    const locations = d3.group(firsthandData, d => d["Local Site Name"]);
+
+    console.log("Locations:", locations);
+  
+    const geojsonFeatures = [];
+  
+    locations.forEach((values, key) => {
+      const latitude = +values[0]["Site Latitude"];
+      const longitude = +values[0]["Site Longitude"];
+
+      console.log(key);
+      
+  
+      const groupedData = [];
+      
+      values.forEach(d => {
+        const eachDateCell = {day: "",  category: ""};
+
+        if (d["Daily Mean PM2.5 Concentration"] <= 6 && d["Daily Mean PM2.5 Concentration"] >= 0){
+          eachDateCell.day = d["Date"]
+          eachDateCell.category = "Good"
+          groupedData.push(eachDateCell);
+        }
+        else if (d["Daily Mean PM2.5 Concentration"] <= 25){
+          eachDateCell.day = d["Date"]
+          eachDateCell.category = "Fair"
+          groupedData.push(eachDateCell);
+        }
+        else{
+          eachDateCell.day = d["Date"]
+          eachDateCell.category = "Poor"
+          groupedData.push(eachDateCell);
+        }
+      });
+
+      geojsonFeatures.push({
+        type: "Feature",
+        properties: {
+          features: groupedData
+        },
+        geometry: {
+          type: "Point",
+          StationName: key,
+          coordinates: [longitude, latitude]
+        }
+      });
+    });
+  
+    const geojson = {
+      type: "FeatureCollection",
+      features: geojsonFeatures
+    };
+  
+    // console.log("GeoJSON Data:", geojson)
+   
+    console.log("GeoJSON Data:", geojson);
+    
+
+    // Call the callback function with the generated GeoJSON data
+    callback(geojson);
+  }).catch(function(error) {
+    console.error("Error loading or parsing data:", error);
+  });
+}
 
 export function convertCsvToGeoJsonForPieChart(tempFilePath, callback) {
-
   console.log("Loading data from file:", tempFilePath);
   // Load the CSV data
   d3.csv(tempFilePath).then(function(data) {
+    // Filter data by Local Site Name and Method Description
+    const filteredData = filterDataByMethods(data, methods);
+
+    // console.log("Filtered Data:", filteredData);
+
     // Parse the data and calculate the average PM2.5 concentration for each location
-    const locations = d3.group(data, d => d["Local Site Name"]);
-    const geojsonFeatures = {};
-    
+    const locations = d3.group(filteredData, d => d["Local Site Name"]);
+
+    console.log("Locations:", locations);
+
+    const geojsonFeatures = [];
 
     locations.forEach((values, key) => {
-      const groupedData = { Good: 0, Fair: 0, Poor: 0};
-
+      // console.log("Values:", values["coordinates"]);
+      
+      const groupedData = { Good: 0, Fair: 0, Poor: 0 };
+      
       values.forEach(d => {
         if (d["Daily Mean PM2.5 Concentration"] <= 6) groupedData.Good++;
         else if (d["Daily Mean PM2.5 Concentration"] <= 25) groupedData.Fair++;
         else groupedData.Poor++;
       });
 
+
+
       geojsonFeatures[key] = groupedData;
+  
     });
 
     const geojson = {
@@ -229,6 +365,7 @@ export function convertCsvToGeoJson(tempFilePath, callback) {
   d3.csv(tempFilePath).then(function(data) {
     // Parse the data and calculate the average PM2.5 concentration for each location
     const locations = d3.group(data, d => d["Local Site Name"]);
+    
     const geojsonFeatures = [];
 
     locations.forEach((values, key) => {
@@ -266,5 +403,3 @@ export function convertCsvToGeoJson(tempFilePath, callback) {
     console.error("Error loading or parsing data:", error);
   });
 }
-
-
