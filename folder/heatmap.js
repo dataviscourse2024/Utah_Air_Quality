@@ -1,22 +1,38 @@
+import { convertCsvToGeoJsonForHeatMap } from './script.js';
+
+
+
 const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
 const CHART_WIDTH = 275;
 const CHART_HEIGHT = 300;
 
 export function heatMapSetup(globalState, stationName) {
-    console.log("Creating Heatmap");
+    // console.log("Creating Heatmap");
     const svg = d3.select("#tooltip-chart-svg")
     .attr("width", CHART_WIDTH)
     .attr("height", CHART_HEIGHT);
 
-    let tempGeoJson = makeFakeData(globalState.selectedSeason, globalState.selectedYear);
-    console.log("FAKE DATA", tempGeoJson);
+    // let tempGeoJson = makeFakeData(globalState.selectedSeason, globalState.selectedYear);
+    // console.log("FAKE DATA", tempGeoJson);
 
-    updateHeatMap(tempGeoJson, "tempStationName", globalState.selectedSeason, globalState.selectedYear)
+
+    convertCsvToGeoJsonForHeatMap(globalState.data, function(geojson) {
+        console.log("Data for HeatMAP: ", geojson);
+        updateHeatMap(geojson, stationName, globalState.selectedSeason, globalState.selectedYear);
+        
+    });
+
 }
 
 function updateHeatMap(geojson, stationName, season, year) {
 
-    let inputData = geojson[stationName]
+    const stationData = geojson.features.find(feature => feature.geometry.StationName === stationName);
+    if (!stationData) {
+        console.error(`No data found for station: ${stationName}`);
+        return;
+    }
+
+    let inputData = stationData.properties.features;
     const numColumns = 7; // Days in a week for a calendar layout
     const numRows = 5; // Maximum rows for a month
     const spacing = 5; // Space between squares (in pixels)
@@ -27,7 +43,9 @@ function updateHeatMap(geojson, stationName, season, year) {
 
 
     const monthsList = getSeasonDays(season, year);
-    console.log(monthsList.length, monthsList[0][2]);
+
+    console.log("MONTHS LIST", monthsList);
+    // console.log(monthsList.length, monthsList[0][2]);
 
 
     const svg = d3.select("#tooltip-chart-svg")
@@ -37,12 +55,18 @@ function updateHeatMap(geojson, stationName, season, year) {
     .range(["#33ff7d", "#ffea33", "#ff5733", "#d3d3d3"]);
 
     console.log("REMOVINGGG");
+
+    const parseDate = d3.timeParse("%m/%d/%Y");
+
     svg.selectAll("g").remove();
     for(let month = 0; month < monthsList.length; month++) {
         console.log("here ", month);
         const fullData = Array.from({ length: monthsList[month][2] }, (_, i) => {
-            const day = `${monthsList[month][1]}${i+1}`;
-            const existingDay = inputData.find((d) => d.day === day);
+            // const day = `${monthsList[month][1]}${i+1}`;
+            const dummyDate = parseDate(`${monthsList[month][0]}/${i+1}/${year}`);
+            console.log("DUMMY DATE", dummyDate)
+            const existingDay = inputData.find(d => parseDate(d.day).getTime() === dummyDate.getTime());
+            console.log("EXISTING DAY", existingDay)
             return existingDay || { day, category: null };
           });
           console.log("FULL DATA", fullData)
@@ -106,23 +130,23 @@ function getDaysInMonth(monthName, year) {
     return nextMonth.getDate(); // Get the day of the last day (total days)
 }
 
-function makeFakeData(season, year) {
-    // let tempGeoJson = {"tempStationName": [
-    //     { day: 1, category: "Good" },
-    //     { day: 2, category: "Fair" },
-    //     { day: 5, category: "Poor" },
-    //     // Missing days 3, 4, etc.
-    //   ]}
+// function makeFakeData(season, year) {
+//     // let tempGeoJson = {"tempStationName": [
+//     //     { day: 1, category: "Good" },
+//     //     { day: 2, category: "Fair" },
+//     //     { day: 5, category: "Poor" },
+//     //     // Missing days 3, 4, etc.
+//     //   ]}
 
-    let tempGeoJson = {"tempStationName": []}
+//     let tempGeoJson = {"tempStationName": []}
 
-    let categories = ["Good", "Fair", "Poor"]
-    const monthsList = getSeasonDays(season, year);
-    for(let month = 0; month < monthsList.length; month++) {
-        for(let i = 0; i < monthsList[month][2]; i++) {
-            tempGeoJson["tempStationName"].push({day:`${monthsList[month][1]}${i+1}`, category:categories[Math.floor(Math.random() * 3)]})
-        }
-    }
+//     let categories = ["Good", "Fair", "Poor"]
+//     const monthsList = getSeasonDays(season, year);
+//     for(let month = 0; month < monthsList.length; month++) {
+//         for(let i = 0; i < monthsList[month][2]; i++) {
+//             tempGeoJson["tempStationName"].push({day:`${monthsList[month][1]}${i+1}`, category:categories[Math.floor(Math.random() * 3)]})
+//         }
+//     }
 
-    return tempGeoJson
-}
+//     return tempGeoJson
+// }

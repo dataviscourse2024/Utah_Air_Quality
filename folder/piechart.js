@@ -40,12 +40,17 @@ export function updatePieChart(geojson, stationName) {
 
     console.log("Data:", geojson);
     const groupedData = geojson.features[stationName];
-    
+
+    console.log("Grouped Data:", groupedData);
+
+
     // Convert grouped data into an array suitable for the pie chart
     const pieData = Object.entries(groupedData).map(([key, value]) => ({
         category: key,
         value: value
     }));
+
+
 
     // Step 2: Set up dimensions and radius
     const width = CHART_WIDTH;
