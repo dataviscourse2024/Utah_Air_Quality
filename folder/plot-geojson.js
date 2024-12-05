@@ -262,12 +262,40 @@ function toggleModal() {
   isModalOpen = !isModalOpen;
 }
 
+
+let interval; 
+
 function handleAnimation() {
-  const playButton = d3.select("#animation-icon")
+  const playButton = d3.select("#animation-icon");
   let currSrc = playButton.attr("src");
-  const newSrc = currSrc === "/folder/icons/PlayIcon.png" ? "/folder/icons/stopSquareIcon.webp" : "/folder/icons/PlayIcon.png";
-  playButton.attr("src", newSrc)
+  const newSrc = currSrc === "/icons/PlayIcon.png" ? "/icons/stopSquareIcon.webp" : "/icons/PlayIcon.png";
+  playButton.attr("src", newSrc);
+
+  const slider = d3.select("#customRange3");
+
+  if (newSrc === "/icons/PlayIcon.png") {
+    // Stop the animation
+    clearInterval(interval);
+  } else {
+    // Start the animation
+    interval = setInterval(() => {
+      const currValue = parseInt(slider.property("value"));
+
+      if (currValue === 12) {
+        // Stop the interval when the value reaches 12
+        clearInterval(interval);
+      } else {
+        const newValue = currValue + 1;
+        slider.property("value", newValue);
+        slider.dispatch("change");
+      }
+    }, 1000);
+  }
 }
+
+
+
+
 
 // Run the main function
 main();
