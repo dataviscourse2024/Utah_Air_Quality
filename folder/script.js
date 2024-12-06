@@ -158,14 +158,22 @@ const methods = [
   "IMPROVE Module A with Cyclone Inlet-Teflon Filter, 2.2 sq. cm.",
   "R & P Model 2025 PM2.5 Sequential w/WINS",
   "R & P Model 2000 PM2.5 Sampler w/WINS",
-  "Met One SASS/SuperSASS Teflon",
   "Andersen RAAS Teflon",
   "Met One BAM-1020 w/VSCC",
   "Met One BAM-1020 Mass Monitor w/VSCC",
-  "Met One SASS/SuperSASS Teflon",
   "PM2.5 SCC",
   "R & P Model 2025 PM-2.5 Sequential Air Sampler w/VSCC",
   "R & P Model 2000 PM-2.5 Air Sampler w/VSCC",
+  "Met One SASS/SuperSASS Teflon",
+  "R & P Model 2000 PM2.5 Sampler w/WINS",
+  "Thermo Scientific TEOM 1400 FDMS or 1405 8500C FDMS w/VSCC",
+  "Thermo Scientific TEOM 1400 FDMS or 1405 8500C FDMS w/VSCC (Corrected)",
+  "Thermo Scientific TEOM 1400 FDMS or 1405 8500C FDMS - Filter Dynamics Measurement System",
+  "Thermo Scientific TEOM 1400 FDMS or 1405 8500C FDMS - Filter Dynamics Measurement System (Corrected)",
+  "Thermo Scientific TEOM 1400 FDMS or 1405 8500C FDMS - Filter Dynamics Measurement System - Beta Attenuation Monitor",
+  "Thermo Scientific TEOM 1400 FDMS or 1405 8500C FDMS - Filter Dynamics Measurement System - Beta Attenuation Monitor (Corrected)",
+  "BGI Model PQ200 PM2.5 Sampler w/WINS",
+  
 ];
 
 function filterDataByMethods(data, methods) {
