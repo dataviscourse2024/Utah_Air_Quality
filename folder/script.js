@@ -155,7 +155,17 @@ const methods = [
   "Thermo Scientific Model 5030 SHARP - Beta Attenuation Monitor",
   "Teledyne T640 at 5.0 LPM - Beta Attenuation Monitor (Corrected)",
   "Thermo Scientific Model 5030 SHARP - Beta Attenuation Monitor (Corrected)",
-  "IMPROVE Module A with Cyclone Inlet-Teflon Filter, 2.2 sq. cm."
+  "IMPROVE Module A with Cyclone Inlet-Teflon Filter, 2.2 sq. cm.",
+  "R & P Model 2025 PM2.5 Sequential w/WINS",
+  "R & P Model 2000 PM2.5 Sampler w/WINS",
+  "Met One SASS/SuperSASS Teflon",
+  "Andersen RAAS Teflon",
+  "Met One BAM-1020 w/VSCC",
+  "Met One BAM-1020 Mass Monitor w/VSCC",
+  "Met One SASS/SuperSASS Teflon",
+  "PM2.5 SCC",
+  "R & P Model 2025 PM-2.5 Sequential Air Sampler w/VSCC",
+  "R & P Model 2000 PM-2.5 Air Sampler w/VSCC",
 ];
 
 function filterDataByMethods(data, methods) {
