@@ -146,21 +146,17 @@ function groupbyMonth(data) {
 }
 
 const methods = [
-  "IMPROVE Module A with Cyclone Inlet-Teflon Filter, 2.2 sq. cm",
   "R & P Model 2025 PM-2.5 Sequential Air Sampler w/VSCC",
   "Teledyne T640 at 5.0 LPM",
-  "Thermo Scientific Model 5030 SHARP w/VSCC"
+  "Thermo Scientific Model 5030 SHARP w/VSCC",
+  "Teledyne T640 at 5.0 LPM (Corrected)",
+  "Thermo Scientific Model 5030 SHARP w/VSCC (Corrected)",
+  "Teledyne T640 at 5.0 LPM - Beta Attenuation Monitor",
+  "Thermo Scientific Model 5030 SHARP - Beta Attenuation Monitor",
+  "Teledyne T640 at 5.0 LPM - Beta Attenuation Monitor (Corrected)",
+  "Thermo Scientific Model 5030 SHARP - Beta Attenuation Monitor (Corrected)",
+  "IMPROVE Module A with Cyclone Inlet-Teflon Filter, 2.2 sq. cm."
 ];
-
-// function groupForEachMonth(){
-
-//   datePrase
-
-
-
-// }
-
-
 
 function filterDataByMethods(data, methods) {
   // Group data by Local Site Name
@@ -191,7 +187,11 @@ function filterDataByMethods(data, methods) {
     }
   });
 
-  console.log("Filtered Data:", filteredData);
+  // foreach(filteredData, function(d) {
+  //   if(d["Local Site Name"] === "naDinosaur National Monument"){
+  //     console.log("Dinosaur National Monument Dugged", d);
+  //   }
+  // });
 
   return filteredData;
 }
@@ -280,12 +280,14 @@ export function convertCsvToGeoJsonForPieChart(tempFilePath, callback) {
     // Parse the data and calculate the average PM2.5 concentration for each location
     const locations = d3.group(filteredData, d => d["Local Site Name"]);
 
-    console.log("Locations:", locations);
+    console.log("Locations for PieChart:", locations);
 
     const geojsonFeatures = [];
 
     locations.forEach((values, key) => {
       // console.log("Values:", values["coordinates"]);
+
+
       
       const groupedData = { Good: 0, Fair: 0, Poor: 0 };
       
@@ -294,6 +296,10 @@ export function convertCsvToGeoJsonForPieChart(tempFilePath, callback) {
         else if (d["Daily Mean PM2.5 Concentration"] <= 25) groupedData.Fair++;
         else groupedData.Poor++;
       });
+
+      if(key === "naDinosaur National Monument"){
+        console.log("Dinosaur National Monument", groupedData);
+      }
 
 
 
