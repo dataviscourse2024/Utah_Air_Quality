@@ -43,7 +43,10 @@ This project visualizes air quality data in Utah, focusing on PM2.5 levels. It i
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ## Links
+[Video](https://www.youtube.com/watch?v=2Q7AsIfT658) note: this video is made before final realse.
 [Proposal](https://docs.google.com/document/d/1fxyGvyDPkBRHJ9T6WyT58l2Fn_95bQhJuNvDG30FsMU/edit)
+[ProcessBook](https://docs.google.com/document/d/1ys-B3hiEGELgIyPxS73TbVX_qyhpnz_lBKYi7RsfHq0/edit?tab=t.0)
+
 
 
 ## Contact
