@@ -67,7 +67,7 @@ function updateHeatMap(geojson, stationName, season, year) {
             console.log("DUMMY DATE", dummyDate)
             const existingDay = inputData.find(d => parseDate(d.day).getTime() === dummyDate.getTime());
             console.log("EXISTING DAY", existingDay)
-            return existingDay || { day, category: null };
+            return existingDay || { day: dummyDate, category: null };
           });
           console.log("FULL DATA", fullData)
 
