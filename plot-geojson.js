@@ -345,13 +345,13 @@ function handleAnimation() {
   }
   const playButton = d3.select("#animation-icon");
   let currSrc = playButton.attr("src");
-  const newSrc = currSrc === "/folder/icons/PlayIcon.png" ? "/folder/icons/stop_icon.svg" : "/folder/icons/PlayIcon.png";
+  const newSrc = currSrc === "/icons/PlayIcon.png" ? "/icons/stop_icon.svg" : "/icons/PlayIcon.png";
   playButton.attr("src", newSrc);
   const text_label = d3.select("#selected-year");
   const slider = d3.select("#customRange3");
   d3.selectAll(".btn-group .btn").classed("season-unselected", true);
 
-  if (newSrc === "/folder/icons/PlayIcon.png") {
+  if (newSrc === "/icons/PlayIcon.png") {
     // Stop the animation
     clearInterval(interval);
     slider.property("value", 1);

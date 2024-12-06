@@ -40,10 +40,16 @@
   <div id="left-container">
     <h3 id="left-container-header">About Utah's Air Quality</h3>
     <div class="text-container">
-      <p>The analysis of PM2.5 levels in Vernal, Utah, reveals distinct seasonal patterns and significant monthly variations. These fluctuations can be attributed to both natural and human activities prevalent in the region.</p>
-      <p>July shows a notable spike in pollution levels. This can be attributed to celebrations such as the Fourth of July, which involve fireworks and other festivities that release significant amounts of particulate matter into the air. Additionally, higher temperatures in July can enhance the formation of ground-level ozone, further contributing to pollution levels.</p>
-      <p>September also displays a unique spike in pollution levels. In Vernal, Utah, September is typically a harvest month for many crops. Agricultural activities, including harvesting and plowing, release a significant amount of dust and particulate matter into the air. The use of machinery and the disturbance of dry soil during these activities significantly contribute to higher PM2.5 levels.</p> 
-      <p>Furthermore, the end of summer and early fall can coincide with wildfire season in the region, which could also contribute to elevated pollution levels if fires occur nearby.</p>
+      <p>This visualization displays Utah's Pm2.5 pollutant amounts over the years. Each dot represents a Utah air quality station. Hovering over each dot will give a more in depth reprsentation of the data from that station. 
+        The bottom buttons will show the selected season for that year and hovering over the dots will show a heatmap representating each day's air quality. </p>
+      <p>Some quick background information is that PM2.5 stands for Particulate matter 2.5. This is a type of air pollution made up of particles that are 2.5 micrometers or less in diameter. Long exposure can be unhealthy since inhaling can cause inflamation and tissue damage.</p> 
+      <p>By looking through the yearly data we have seen some unique trends and events that have been visualized on this site!</p>
+      <p>Our first example is looking at 1999 you can see that there a lot less data points. This leads us to believe that over the last 20 years we have seen an increase in importance on air quality and climate trends.
+        This aligns with the growing climate issues and movements that are occuring around the world </p>
+      <p>Another example is during the spring of 2020. The air quality is best that its been over the years which matches with lockdowns for COVID19 going into effect. </p>
+      <p>Another trend that is shown is that winter tends to be the worst season in terms of pm2.5. This can be explained by the change in wind patterns can the inversion. This traps pollutants in the salt lake valley and surrounding areas causing
+        pollution to stay rather than being blown out.
+      </p>
     </div>
     <a href="https://www.youtube.com/watch?v=2Q7AsIfT658" target="_blank">Link to Demo Video</a>
   </div>
@@ -55,7 +61,7 @@
     <div id="map-controls-container">
       <label class="form-label" id="selected-year">Year</label>
       <div id="slider-container">
-        <img id="animation-icon" src="/folder/icons/PlayIcon.png" alt="Right Arrow Icon" />
+        <img id="animation-icon" src="/icons/PlayIcon.png" alt="Right Arrow Icon" />
         <input type="range" class="form-range" min="1" max="12" step="1" id="customRange3" value="1" disabled>  
       </div>
       <!-- <div class="btn-group" role="group" aria-label="Season Buttons">
