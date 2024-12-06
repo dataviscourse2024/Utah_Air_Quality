@@ -33,6 +33,8 @@ function plotGeoJson(geojson, geoJsonGroup, path) {
     .attr("stroke", colors.mapBorder)
     .attr("fill", colors.mapFill)
     .style("z-index", 3)
+
+  
 }
 
 
@@ -51,9 +53,10 @@ export function plotPoints(geojson, geoJsonGroup) {
   const offsetY = 10
   const pointRadius = 5
 
-
   const colorScale = d3.scaleSequential(d3.interpolateReds)
   .domain(d3.extent(geojson.features, d => d.properties.avgPM25));
+
+  addLegend(colorScale, geoJsonGroup)
 
   const sizeScale = d3.scaleLinear().domain(d3.extent(geojson.features, d => d.properties.avgPM25)).range([2, 15]);
 
@@ -118,6 +121,66 @@ export function plotPoints(geojson, geoJsonGroup) {
       
     });
 }
+
+function addLegend(color, geoJsonGroup) {
+  // Constants for the legend
+  const legendWidth = 100; // Width of the legend
+  const legendHeight = 20; // Height of the legend
+  const margin = { left: 20, bottom: 40 }; // Margin for positioning
+  const map = d3.select("#utah-map-svg");
+  const bounds = geoJsonGroup.node().getBBox();
+  const svgWidth = parseInt(map.attr("width")); // Set the width of your SVG
+  const svgHeight = parseInt(map.attr("height"));
+  console.log(svgWidth + 100)
+   // Assuming this is your SVG element
+
+  // Add legend group to map and position it
+  const legend = map.append("g")
+    .attr("class", "legend")
+    .attr("transform", `translate(${bounds.x + svgWidth - legendWidth - 50}, ${bounds.y + svgHeight - legendHeight - 80})`);
+
+  // Define the color gradient for the legend
+  const defs = map.append("defs");
+  const linearGradient = defs.append("linearGradient")
+    .attr("id", "legend-gradient")
+    .attr("x1", "0%")
+    .attr("x2", "100%")
+    .attr("y1", "0%")
+    .attr("y2", "0%");
+
+  // Create a gradient by calculating stops across the domain
+  const numStops = 10;
+  for (let i = 0; i <= numStops; i++) {
+      const ratio = i / numStops;
+      const colorValue = color(color.domain()[0] + ratio * (color.domain()[1] - color.domain()[0])); // Get color value for the stop
+      linearGradient.append("stop")
+          .attr("offset", `${ratio * 100}%`)
+          .attr("stop-color", colorValue);
+  }
+
+  // Draw the rectangle with the gradient fill
+  legend.append("rect")
+    .attr("x", 0)
+    .attr("width", legendWidth)
+    .attr("height", legendHeight)
+    .style("fill", "url(#legend-gradient)");
+
+  // Define a scale for the legend axis
+  const legendScale = d3.scaleLinear()
+    .domain([0, 9]) // Use the domain of the color scale
+    .range([0, legendWidth]);
+
+  // Define the axis to display values on the legend
+  const legendAxis = d3.axisBottom(legendScale)
+    .tickValues([0, 4.5, 9])
+    .tickFormat(d3.format(".1f")); // Format the tick values to 2 decimal places
+
+  // Add the legend axis to the legend
+  legend.append("g")
+    .attr("transform", `translate(0, ${legendHeight})`) // Position the axis below the rectangle
+    .call(legendAxis);
+}
+
 
 
 function updateCircleSizes(month, geojson, geoJsonGroup) {

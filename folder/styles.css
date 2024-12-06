@@ -267,3 +267,7 @@
       opacity: .5;
     }
 
+    .text-container {
+      max-height: 80vh;
+      overflow-y: scroll;
+    }
