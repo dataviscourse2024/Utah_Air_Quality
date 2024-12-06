@@ -122,15 +122,21 @@ export function plotPoints(geojson, geoJsonGroup) {
 
 function updateCircleSizes(month, geojson, geoJsonGroup) {
   const monthIndex = parseInt(month);
+  console.log(geojson);
+  
   geoJsonGroup.selectAll("circle")
     .data(geojson.features)
+    .on("mouseover", function(event, d) {})
+    .on("mousemove", function(event) {})
+    .on("mouseout", function(event, d) {})
     .transition()
-    .duration(1000)
+    .duration(500)
     .attr("r", d => {
       const monthlyData = d.properties.monthlyData;
-      const avgPM25Month = monthlyData[monthIndex].avgPM25Month;
+      const avgPM25Month = monthlyData[monthIndex-1].avgPM25Month;
       return avgPM25Month;
     });
+    
 }
  
 
@@ -196,7 +202,7 @@ function main() {
     console.log("Year selected:", year); // Debugging log
     // Load the GeoJSON data and update the modal content based on the selected year
     d3.selectAll(".btn-group .btn").classed("season-unselected", true);
-    d3.select("#selected-year").text(`Average over: ${year}`);
+    d3.select("#selected-year").text(`Average For: ${year}`);
 
 
     const filePath = `data/${year}.csv`;
@@ -266,29 +272,37 @@ function toggleModal() {
 let interval; 
 
 function handleAnimation() {
+  if(!globalState.selectedYear){
+    return;
+  }
   const playButton = d3.select("#animation-icon");
   let currSrc = playButton.attr("src");
-  const newSrc = currSrc === "/icons/PlayIcon.png" ? "/icons/stopSquareIcon.webp" : "/icons/PlayIcon.png";
+  const newSrc = currSrc === "/folder/icons/PlayIcon.png" ? "/folder/icons/stop_icon.svg" : "/folder/icons/PlayIcon.png";
   playButton.attr("src", newSrc);
-
+  const text_label = d3.select("#selected-year");
   const slider = d3.select("#customRange3");
+  d3.selectAll(".btn-group .btn").classed("season-unselected", true);
 
-  if (newSrc === "/icons/PlayIcon.png") {
+  if (newSrc === "/folder/icons/PlayIcon.png") {
     // Stop the animation
     clearInterval(interval);
+    slider.property("value", 1);
+    const filePath = globalState.data;
+    const geoJsonGroup = d3.select("#utah-map-svg").select("g");
+    text_label.text(`Average For: ${globalState.selectedYear}`);
+    
+    convertCsvToGeoJson(filePath, function(geojson) {
+      console.log("Check after selecting year, call this plot function");
+      plotPoints(geojson, geoJsonGroup);
+    });
   } else {
     // Start the animation
     interval = setInterval(() => {
       const currValue = parseInt(slider.property("value"));
-
-      if (currValue === 12) {
-        // Stop the interval when the value reaches 12
-        clearInterval(interval);
-      } else {
-        const newValue = currValue + 1;
-        slider.property("value", newValue);
-        slider.dispatch("change");
-      }
+      const newValue = currValue + 1 > 12 ? 1 : currValue + 1;
+      slider.property("value", newValue);
+      slider.dispatch("change");
+      text_label.text(`Average For: ${newValue} ${globalState.selectedYear}`);
     }, 1000);
   }
 }
