@@ -274,6 +274,8 @@ function toggleModal() {
 
 let interval; 
 
+const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+
 function handleAnimation() {
   if(!globalState.selectedYear){
     return;
@@ -305,7 +307,7 @@ function handleAnimation() {
       const newValue = currValue + 1 > 12 ? 1 : currValue + 1;
       slider.property("value", newValue);
       slider.dispatch("change");
-      text_label.text(`Average For: ${newValue} ${globalState.selectedYear}`);
+      text_label.text(`Average For: ${monthNames[newValue - 1]} ${globalState.selectedYear}`);
     }, 1000);
   }
 }
