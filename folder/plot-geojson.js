@@ -196,11 +196,14 @@ function main() {
   d3.select("#selected-year").text("Please select a year");
 
   // On selection change
-
-  d3.selectAll(".dropdown-menu").on("change", function(event) {
-    const year = this.value;
+  d3.selectAll(".dropdown-item").on("click", function(event) {
+    const year = d3.select(this).attr('data-value');
     console.log("Year selected:", year); // Debugging log
     // Load the GeoJSON data and update the modal content based on the selected year
+
+    d3.select('#dropdownMenuButton')
+    .text(year);
+
     d3.selectAll(".btn-group .btn").classed("season-unselected", true);
     d3.select("#selected-year").text(`Average For: ${year}`);
 
