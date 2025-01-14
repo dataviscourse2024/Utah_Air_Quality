@@ -1,6 +1,6 @@
 import { convertCsvToGeoJsonForHeatMap } from './script.js';
 
-
+//
 
 const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
 const CHART_WIDTH = 275;
